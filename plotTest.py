@@ -39,18 +39,19 @@ df = pd.read_excel(loc)                             #Läs in excelfilen som en D
 
 data = df['Flödesdata  (MED) (l/s, 15 min medel)']  #Plocka ut kolumnen med datan
 dataEWM = data.ewm(com=100).mean()                  # Räkna ut EWMA. Com är typ en skalär vet inte riktig hur viktig den är. Det verkar kanske vara lite som man själv vill.
-df['EWM'] = dataEWM                                 # Skapa en ny kolumn i DataFramen som är EWMA
-avg = dataEWM.mean()                                # Medelvärdet av EWMA
+dygn = data.rolling(96).sum()/100
+df['Dygn'] = dygn                                 # Skapa en ny kolumn i DataFramen som är rullande dygn
+avg = dygn.mean()                                # Medelvärdet av EWMA
 df['avg'] = avg                                     # Skapa en ny kolumn i DataFramen som är medelvärdet
-std = dataEWM.std()                                 # Räkna ut standardavvikelsen
+std = dygn.std()                                 # Räkna ut standardavvikelsen
 df['std+'] = avg + (3*std)                          # Skapa en ny kolumn i DataFramen som är medelvärdet + 3*standardavvikelse
 df['std-'] = avg - (3*std)                          # Skapa en ny kolumn i DataFramen som är medelvärdet - 3*standardavvikelse
-df['cusum'] = get_cusum(dataEWM)                    # Skapa en ny kolumn i DataFramen som är cusum
+df['cusum'] = get_cusum(dygn)                    # Skapa en ny kolumn i DataFramen som är cusum
 
 ax = plt.gca()                                      # Nåt med axlarna för ploten
 
 df.plot(y='Flödesdata  (MED) (l/s, 15 min medel)', color="blue",ax=ax)  # Plotta originaldatan
-df.plot(y='EWM', color="yellow",ax=ax)                                  # Plotta EWM
+df.plot(y='Dygn', color="yellow",ax=ax)                                 # Plotta flytande dygn
 df.plot(y='avg', color='black', ax=ax)                                  # Plotta medelvärdet
 df.plot(y='std+', color='red', ax=ax)                                   # Plotta medelvärdet + 3*standardavvikelse
 df.plot(y='std-', color='red', ax=ax)                                   # Plotta medelvärdet - 3*standardavvikelse
