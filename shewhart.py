@@ -2,8 +2,6 @@ import pandas as pd
 import xlrd
 import matplotlib
 import matplotlib.pyplot as plt
-import os.path
-import datahandler as dh
 
 def shewhart(df):                    
     avg = df['Flow (l/s)'].mean()                                
@@ -11,8 +9,6 @@ def shewhart(df):
     std = df['Flow (l/s)'].std() 
     UCL = avg + (3*std)
     LCL = avg - (3*std)                                
-    print(UCL)
-    print(LCL)
     df2 = df.copy()
     lock = True
     while(lock):
@@ -25,8 +21,6 @@ def shewhart(df):
         std = df2['Flow (l/s)'].std() 
         UCL = avg + (3*std)
         LCL = avg - (3*std)  
-        print(UCL)
-        print(LCL)
         if(a > len(df2['Flow (l/s)'])):
             lock = True
 
