@@ -12,7 +12,7 @@ def datahandler(dataset_name):
     #print(df.dtypes)
 
     df.drop(['Time'], axis=1, inplace=True)
-    indexStar = df[df['Flow (l/s)'] == '*' ].index        # Get names of indexes for which column Age has value 30
+    indexStar = df[df['Flow (l/s)'] == '*' ].index
     df.drop(indexStar, inplace=True)                      # Delete these row indexes from dataFrame
     df['Flow (l/s)'] = df['Flow (l/s)'].astype(float)
     #print(df.dtypes)
