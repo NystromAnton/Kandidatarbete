@@ -3,7 +3,7 @@ import cusum as c
 import ewma as e
 import pandas as pd
 
-loc = "Rådata_vatten_Arboga.xlsx"
+loc = "Data\Rådata_vatten_Arboga.xlsx"
 
 df = pd.read_excel(loc)                             # Läs in excelfilen som en DataFrame. Ganska långsam.
 for i in range(0, len(df['Flöde (l/s)'])):          # Loopa igenom datan och ta bort '*'
