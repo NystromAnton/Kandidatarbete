@@ -5,7 +5,7 @@ import ewma as e
 import pandas as pd
 
 def datahandler(dataset_name):
-    data_folder = Path("Data/")
+    data_folder = Path("Data/")  # Metod för att pathen ska funka på både linux och windows
     loc = data_folder / dataset_name
 
     df = pd.read_csv(loc, sep= ';', decimal= ',', engine= 'python')   # Läs in filen som en DataFrame. OBS använder python som engine - funkar men tydligen ganska långsamt
