@@ -3,51 +3,28 @@ import xlrd
 import matplotlib
 import matplotlib.pyplot as plt
 
-# Funktion för att räkna ut "The high cusum value"
-def get_cusum_h(data):
-    normalized = (data - data.mean()) / data.std()
-    s = [0]
-    for i in range(1, len(data)):
-        s.append(max(0,s[i-1] + normalized[i] - normalized.mean()))
-    return s
-
-# Funktion för att räkna ut "The low cusum value"
-def get_cusum_l(data):
-    normalized = (data - data.mean()) / data.std()
-    s = [0]
-    for i in range(1, len(data)):
-        s.append((max(0,s[i-1] - normalized[i] - normalized.mean())))
-    return s
-
-def cusum2(data):
-    normalized = (data - data.mean()) / data.std()
-    s = [0]
-    for i in range(1, len(data)):
-        s.append(s[i-1] + normalized[i] - normalized.mean())
-    return pd.DataFrame(s)
-
-# Funktion för att räna ut cusum.
+# Hjälpfunktion för att räkna ut cusumen för en kolumn.
+# Precondition: None
+# In: data = en kolumn i en DataFrame.
+# Out: En DataFrame med en CUSUM för den givna kolumnen.
+# Sideeffect: None
 def get_cusum(data):
-    s = []
-    H = get_cusum_h(data)
-    L = get_cusum_l(data)
-    for i in range(0, len(data)):
-        if H[i] == 0 and L[i] == 0:
-            s.append(data.mean())
-        elif H[i] != 0:
-            s.append(H[i])
-        elif L[i] != 0:
-            s.append(-L[i])
-    return pd.DataFrame(s)
+    normalized = (data - data.mean()) / data.std()                              # Normalisera datan i kolumnen.
+    s = [0]                                                                     # Skapa en lista och sätt första värdet till 0.
+    for i in range(1, len(data)):                                               # Loopa igenom kolumnen.
+        s.append(s[i-1] + normalized[i] - normalized.mean())                    # Räkna ut CUSUM värdet för den datapunkten och lgg till i listan.
+    return pd.DataFrame(s)                                                      # Returnera CUSUMen som en DataFrame
 
+# Funktion som tar kolumnen 'Flow (l/s)' i en DataFrame och räknar ut en CUSUM för den kolumnen.
+# Precondition: DataFramen måste ha en kolumn med namnet 'Flow (l/s)'.
+# In: En DataFrame.
+# Out: None
+# Sideeffect: Skapar en ny kolum i den givna DataFramen som heter 'cusum'.
 def cusum(df):
-    df['cusum'] = get_cusum(df['Flow (l/s)']).set_index(df.index)                                     # Skapa en ny kolumn i DataFramen som är cusum
-    df['cusum2'] = cusum2(df['Flow (l/s)']).set_index(df.index)                                     # Skapa en ny kolumn i DataFramen som är cusum
+    df['cusum'] = get_cusum(df['Flow (l/s)']).set_index(df.index)               # Skapa en ny kolumn i DataFramen som heter 'cusum'. set_index synkar indexeringen på den nya kolumnen och DataFramen så att de är samma.
 
-    ax = plt.gca()                                                          # Nåt med axlarna för ploten
-                               # Plotta flytande dygn
-    df.plot(y='cusum', color='green', ax=ax)                               # Plotta cusum
-    df.plot(y='cusum2', color='orange', ax=ax)                               # Plotta cusum
-    df.plot(y='Flow (l/s)', color='blue', ax=ax)
+    ax = plt.gca()                                                              # Nåt med axlarna för ploten
 
-    plt.show()                                                              # Visa plotten
+    df.plot(y='cusum', color='green', ax=ax)                                    # Lägg till CUSUMen i plotten.
+
+    plt.show()                                                                  # Visa plotten
