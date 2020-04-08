@@ -5,9 +5,9 @@ import matplotlib
 import matplotlib.pyplot as plt
 import dateutil
 
-def ewma(df):
+def o_ewma(df):
     data = df['Flow (l/s)']                        # Plocka ut kolumnen med originaldatan. Vet inte om man ska göra detta på originaldatan eller flytande dygn egentligen.
-    dataEWMA = data.ewm(com=100).mean()            # Räkna ut EWMA. Com är typ en skalär vet inte riktig hur viktig den är. Det verkar kanske vara lite som man själv vill.
+    dataEWMA = data.ewm(com=9).mean()           # Räkna ut EWMA. Com är typ en skalär vet inte riktig hur viktig den är. Det verkar kanske vara lite som man själv vill.
     df['EWMA'] = dataEWMA                          # Skapa en ny kolumn i DataFramen som är EWMA
     ax = plt.gca()                                 # Axlarna för ploten
 
@@ -15,3 +15,4 @@ def ewma(df):
     df.plot(y='EWMA', color='pink', ax=ax)         # Plotta EWMA
 
     plt.show()                                     # Visa plotten
+
