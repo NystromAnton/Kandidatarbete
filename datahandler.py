@@ -1,6 +1,7 @@
 from pathlib import Path
 import pandas as pd
-
+from datetime import datetime, timedelta
+from datetime import time
 
 
 #-------------------------------------------------
@@ -19,7 +20,6 @@ def converter(dataset):
     df['Flow (l/s)'] = df['Flow (l/s)'].astype(float)                   # Byter column 'Flow (l/s)' från object till float
     df['Date'] = pd.to_datetime(df['Date'] + ' ' + df['Time'])          # Converterar columnerna 'Date' och 'Time' från object till datetime64
     df.drop(['Time'], axis=1, inplace=True)                             # Tar bort column 'Time'
-
     return df
 
 
@@ -59,7 +59,9 @@ def nightMean(dataset):
         df.drop(df.head(indexMax).index, axis=0, inplace=True)           # Datum 'i' tas bort från df
         if len(dfMean) == 24:                                           
             dfMean.drop(dfMean.index[indexHour], axis=0, inplace=True)   # Timmarna tas bort 
-        dfResult['Flow (l/s)'][i] = dfMean.mean()[0]                     # Medelflödet på natten läggs in i 'dfResult'
+            dfResult['Flow (l/s)'][i] = dfMean.mean()[0]                 # Medelflödet på natten läggs in i 'dfResult'
+        else:
+            break                                                        # Räknar inte med den sista dagen
 
     return dfResult
 
@@ -85,7 +87,9 @@ def dayMean(dataset):
         df.drop(df.head(indexMax).index, axis=0, inplace=True)           # Datum 'i' tas bort från df
         if len(dfMean) == 24:                                           
             dfMean.drop(dfMean.index[indexHour], axis=0, inplace=True)   # Timmarna tas bort                          
-        dfResult['Flow (l/s)'][i] = dfMean.mean()[0]                     # Medelflödet på natten läggs in i 'dfResult'
+            dfResult['Flow (l/s)'][i] = dfMean.mean()[0]                 # Medelflödet på natten läggs in i 'dfResult'
+        else:
+            break                                                        # Räknar inte med den sista dagen
 
     return dfResult
 
@@ -105,17 +109,30 @@ def dayHours(dataset):
                 18, 19, 20, 21, 22, 23]                                  # Alla timmar från 0-23 som ska bort
     dfResult = pd.DataFrame()                                            # df som ska retuneras
 
+    format = "%Y-%m-%d"
+    f = ['0','1','2','3','4','5','6','7','8','9']
+    t = ['00','01','02','03','04','05','06','07','08','09']
+
     for i in range(len(dfSize)):
         indexMax = dfSize.iloc[i]                                        # Tar fram antalet datapunker för datum 'i'
         dfMean = df.groupby(df['Date'].dt.hour).mean().head(indexMax)    # Datum 'i' grupperas i timmar
         df.drop(df.head(indexMax).index, axis=0, inplace=True)           # Datum 'i' tas bort från df
         if len(dfMean) == 24:                                           
             dfMean.drop(dfMean.index[indexHour], axis=0, inplace=True)   # Timmarna tas bort                          
+        else:
+            break                                                        # Räknar inte med den sista dagen
 
         date = dfSize.index[i]                                           # Tar fram datumet för datum 'i'
         for j in range(len(dfMean)):                                     
             data = dfMean.iloc[j][0]                                     # Data för timme 'j'
-            dfData = pd.DataFrame({"Flow (l/s)":data}, index = [date])   # Skapar en df med index datum 'i' och column 'Flow (l/s)' för timme 'j'
+            hourSTR = dfMean.index[j].astype(str)                        # Gör om int till str
+            for k in range(len(f)):                                       
+                if hourSTR == f[k]:                                      # Kollar om timmarna är i rätt format
+                    hourSTR = t[k]                                       # kl 1 -> kl 01
+            dateSTR = date.strftime(format)                              # Gör om datetime.date till str
+            time = datetime.fromisoformat(dateSTR + ' ' + 
+                                          hourSTR + ':00:00')            # Gör om str till datetime
+            dfData = pd.DataFrame({"Flow (l/s)":data}, index = [time])   # Skapar en df med index datum 'i' och column 'Flow (l/s)' för timme 'j'
             dfResult = dfResult.append(dfData)                           # Appendar df på dfResult
 
     return dfResult
@@ -135,6 +152,9 @@ def nightHours(dataset):
     indexHour = [0, 5, 6, 7, 8, 9, 10, 11, 12, 13, 
                 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]                  # Alla timmar från 0-23 som ska bort
     dfResult = pd.DataFrame()                                            # df som ska retuneras
+    format = "%Y-%m-%d"
+    f = ['0','1','2','3','4','5','6','7','8','9']
+    t = ['00','01','02','03','04','05','06','07','08','09']
 
     for i in range(len(dfSize)):
         indexMax = dfSize.iloc[i]                                        # Tar fram antalet datapunker för datum 'i'
@@ -142,11 +162,20 @@ def nightHours(dataset):
         df.drop(df.head(indexMax).index, axis=0, inplace=True)           # Datum 'i' tas bort från df
         if len(dfMean) == 24:                                           
             dfMean.drop(dfMean.index[indexHour], axis=0, inplace=True)   # Timmarna tas bort                          
+        else:
+            break                                                        # Räknar inte med den sista dagen
 
         date = dfSize.index[i]                                           # Tar fram datumet för datum 'i'
         for j in range(len(dfMean)):                                     
             data = dfMean.iloc[j][0]                                     # Data för timme 'j'
-            dfData = pd.DataFrame({"Flow (l/s)":data}, index = [date])   # Skapar en df med index datum 'i' och column 'Flow (l/s)' för timme 'j'
+            hourSTR = dfMean.index[j].astype(str)                        # Gör om int till str
+            for k in range(len(f)):                                       
+                if hourSTR == f[k]:                                      # Kollar om timmarna är i rätt format
+                    hourSTR = t[k]                                       # kl 1 -> kl 01
+            dateSTR = date.strftime(format)                              # Gör om datetime.date till str
+            time = datetime.fromisoformat(dateSTR + ' ' + 
+                                          hourSTR + ':00:00')            # Gör om str till datetime
+            dfData = pd.DataFrame({"Flow (l/s)":data}, index = [time])   # Skapar en df med index datum 'i' och column 'Flow (l/s)' för timme 'j'
             dfResult = dfResult.append(dfData)                           # Appendar df på dfResult
 
     return dfResult
@@ -164,6 +193,9 @@ def dateHours(dataset):
 
     dfSize = df.groupby(df['Date'].dt.date).size()                       # Summerar alla datapunkter med samma datum
     dfResult = pd.DataFrame()                                            # df som ska retuneras
+    format = "%Y-%m-%d"
+    f = ['0','1','2','3','4','5','6','7','8','9']
+    t = ['00','01','02','03','04','05','06','07','08','09']
 
     for i in range(len(dfSize)):
         indexMax = dfSize.iloc[i]                                        # Tar fram antalet datapunker för datum 'i'
@@ -173,7 +205,14 @@ def dateHours(dataset):
         date = dfSize.index[i]                                           # Tar fram datumet för datum 'i'
         for j in range(len(dfMean)):                                     
             data = dfMean.iloc[j][0]                                     # Data för timme 'j'
-            dfData = pd.DataFrame({"Flow (l/s)":data}, index = [date])   # Skapar en df med index datum 'i' och column 'Flow (l/s)' för timme 'j'
+            hourSTR = dfMean.index[j].astype(str)                        # Gör om int till str
+            for k in range(len(f)):                                       
+                if hourSTR == f[k]:                                      # Kollar om timmarna är i rätt format
+                    hourSTR = t[k]                                       # kl 1 -> kl 01
+            dateSTR = date.strftime(format)                              # Gör om datetime.date till str
+            time = datetime.fromisoformat(dateSTR + ' ' + 
+                                          hourSTR + ':00:00')            # Gör om str till datetime
+            dfData = pd.DataFrame({"Flow (l/s)":data}, index = [time])   # Skapar en df med index datum 'i' och column 'Flow (l/s)' för timme 'j'
             dfResult = dfResult.append(dfData)                           # Appendar df på dfResult
 
     return dfResult
