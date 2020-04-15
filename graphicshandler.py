@@ -25,7 +25,7 @@ def plotAll(df):
 
     # plot cusum
     ax = plt.subplot(gs[0, 1]) # row 0, col 1
-    df.plot(y='Cusum', color='green', ax=ax)                                    # Lägg till CUSUMen i plotten.
+    df.plot(y='cusum', color='green', ax=ax)                                    # Lägg till CUSUMen i plotten.
     ax.set_title("Cusum")
     plt.gcf().autofmt_xdate()
 
