@@ -5,7 +5,7 @@ from datetime import time
 
 
 #-------------------------------------------------
-# Läser in ett df som är fritt från asterisker från givet dataset
+# Läser in en df som är fritt från asterisker från givet dataset
 # In: dataset
 # Out: DataFrame med column för datum("Date") och flöde("Flow (l/s)")
 # Side effect: -
@@ -160,8 +160,8 @@ def nightHours(dataset):
         indexMax = dfSize.iloc[i]                                        # Tar fram antalet datapunker för datum 'i'
         dfMean = df.groupby(df['Date'].dt.hour).mean().head(indexMax)    # Datum 'i' grupperas i timmar
         df.drop(df.head(indexMax).index, axis=0, inplace=True)           # Datum 'i' tas bort från df
-        if len(dfMean) == 24:                                           
-            dfMean.drop(dfMean.index[indexHour], axis=0, inplace=True)   # Timmarna tas bort                          
+        if len(dfMean) == 24:
+            dfMean.drop(dfMean.index[indexHour], axis=0, inplace=True)   # Timmarna tas bort
         else:
             break                                                        # Räknar inte med den sista dagen
 
@@ -169,7 +169,7 @@ def nightHours(dataset):
         for j in range(len(dfMean)):                                     
             data = dfMean.iloc[j][0]                                     # Data för timme 'j'
             hourSTR = dfMean.index[j].astype(str)                        # Gör om int till str
-            for k in range(len(f)):                                       
+            for k in range(len(f)):                                      
                 if hourSTR == f[k]:                                      # Kollar om timmarna är i rätt format
                     hourSTR = t[k]                                       # kl 1 -> kl 01
             dateSTR = date.strftime(format)                              # Gör om datetime.date till str
