@@ -53,4 +53,5 @@ def cusum(df):
     df.plot(y='cusum', color='green', ax=ax)                                    # Lägg till CUSUMen i plotten.
     df.plot(y='v-mask', color='red', ax=ax, linewidth=2)                        # Gör de delar som är ur kontroll röda
 
-    plt.show()                                                                  # Visa plotten
+    #plt.show()                                                                  # Visa plotten
+    return
