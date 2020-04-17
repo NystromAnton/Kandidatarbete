@@ -5,7 +5,7 @@ from datetime import time
 
 
 #-------------------------------------------------
-# Läser in ett df som är fritt från asterisker från givet dataset
+# Läser in en df som är fritt från asterisker från givet dataset
 # In: dataset
 # Out: DataFrame med column för datum("Date") och flöde("Flow (l/s)")
 # Side effect: -
@@ -50,12 +50,13 @@ def nightMean(dataset):
 
     dfSize = df.groupby(df['Date'].dt.date).size()                       # Summerar alla datapunkter med samma datum
     dfResult = df.groupby(df['Date'].dt.date).mean()                     # Räknar ut medelvärdet för varje datum
-    indexHour = [0, 5, 6, 7, 8, 9, 10, 11, 12, 13, 
+    indexHour = [5, 6, 7, 8, 9, 10, 11, 12, 13, 
                 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]                  # Alla timmar från 0-23 som ska bort
 
     for i in range(len(dfSize)):
         indexMax = dfSize.iloc[i]                                        # Tar fram antalet datapunker för datum 'i'
-        dfMean = df.groupby(df['Date'].dt.hour).mean().head(indexMax)    # Datum 'i' grupperas i timmar
+        dfMean = df.head(indexMax)                                       # Tar fram datum 'i'
+        dfMean = dfMean.groupby(dfMean['Date'].dt.hour).mean()           # Datum 'i' grupperas i timmar
         df.drop(df.head(indexMax).index, axis=0, inplace=True)           # Datum 'i' tas bort från df
         if len(dfMean) == 24:                                           
             dfMean.drop(dfMean.index[indexHour], axis=0, inplace=True)   # Timmarna tas bort 
@@ -83,7 +84,8 @@ def dayMean(dataset):
 
     for i in range(len(dfSize)):
         indexMax = dfSize.iloc[i]                                        # Tar fram antalet datapunker för datum 'i'
-        dfMean = df.groupby(df['Date'].dt.hour).mean().head(indexMax)    # Datum 'i' grupperas i timmar
+        dfMean = df.head(indexMax)                                       # Tar fram datum 'i'
+        dfMean = dfMean.groupby(dfMean['Date'].dt.hour).mean()               # Datum 'i' grupperas i timmar
         df.drop(df.head(indexMax).index, axis=0, inplace=True)           # Datum 'i' tas bort från df
         if len(dfMean) == 24:                                           
             dfMean.drop(dfMean.index[indexHour], axis=0, inplace=True)   # Timmarna tas bort                          
@@ -115,7 +117,8 @@ def dayHours(dataset):
 
     for i in range(len(dfSize)):
         indexMax = dfSize.iloc[i]                                        # Tar fram antalet datapunker för datum 'i'
-        dfMean = df.groupby(df['Date'].dt.hour).mean().head(indexMax)    # Datum 'i' grupperas i timmar
+        dfMean = df.head(indexMax)                                       # Tar fram datum 'i'
+        dfMean = dfMean.groupby(dfMean['Date'].dt.hour).mean()           # Datum 'i' grupperas i timmar
         df.drop(df.head(indexMax).index, axis=0, inplace=True)           # Datum 'i' tas bort från df
         if len(dfMean) == 24:                                           
             dfMean.drop(dfMean.index[indexHour], axis=0, inplace=True)   # Timmarna tas bort                          
@@ -149,7 +152,7 @@ def nightHours(dataset):
     df = converter(dataset)                                              # Rensar dataset till df
 
     dfSize = df.groupby(df['Date'].dt.date).size()                       # Summerar alla datapunkter med samma datum
-    indexHour = [0, 5, 6, 7, 8, 9, 10, 11, 12, 13, 
+    indexHour = [5, 6, 7, 8, 9, 10, 11, 12, 13, 
                 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]                  # Alla timmar från 0-23 som ska bort
     dfResult = pd.DataFrame()                                            # df som ska retuneras
     format = "%Y-%m-%d"
@@ -158,10 +161,11 @@ def nightHours(dataset):
 
     for i in range(len(dfSize)):
         indexMax = dfSize.iloc[i]                                        # Tar fram antalet datapunker för datum 'i'
-        dfMean = df.groupby(df['Date'].dt.hour).mean().head(indexMax)    # Datum 'i' grupperas i timmar
+        dfMean = df.head(indexMax)                                       # Tar fram datum 'i'
+        dfMean = dfMean.groupby(dfMean['Date'].dt.hour).mean()           # Datum 'i' grupperas i timmar
         df.drop(df.head(indexMax).index, axis=0, inplace=True)           # Datum 'i' tas bort från df
-        if len(dfMean) == 24:                                           
-            dfMean.drop(dfMean.index[indexHour], axis=0, inplace=True)   # Timmarna tas bort                          
+        if len(dfMean) == 24:
+            dfMean.drop(dfMean.index[indexHour], axis=0, inplace=True)   # Timmarna tas bort
         else:
             break                                                        # Räknar inte med den sista dagen
 
@@ -169,7 +173,7 @@ def nightHours(dataset):
         for j in range(len(dfMean)):                                     
             data = dfMean.iloc[j][0]                                     # Data för timme 'j'
             hourSTR = dfMean.index[j].astype(str)                        # Gör om int till str
-            for k in range(len(f)):                                       
+            for k in range(len(f)):                                      
                 if hourSTR == f[k]:                                      # Kollar om timmarna är i rätt format
                     hourSTR = t[k]                                       # kl 1 -> kl 01
             dateSTR = date.strftime(format)                              # Gör om datetime.date till str
@@ -199,7 +203,8 @@ def dateHours(dataset):
 
     for i in range(len(dfSize)):
         indexMax = dfSize.iloc[i]                                        # Tar fram antalet datapunker för datum 'i'
-        dfMean = df.groupby(df['Date'].dt.hour).mean().head(indexMax)    # Datum 'i' grupperas i timmar
+        dfMean = df.head(indexMax)                                       # Tar fram datum 'i'
+        dfMean = dfMean.groupby(dfMean['Date'].dt.hour).mean()           # Datum 'i' grupperas i timmar
         df.drop(df.head(indexMax).index, axis=0, inplace=True)           # Datum 'i' tas bort från df
 
         date = dfSize.index[i]                                           # Tar fram datumet för datum 'i'

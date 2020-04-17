@@ -90,8 +90,6 @@ def o_ewma_train_test(df):
     #for i in indexNames:
      #   ax.axvline(x=i, color="purple", linestyle="--")
 
-
-
     plt.show()                                     # Visa plotten
 
 

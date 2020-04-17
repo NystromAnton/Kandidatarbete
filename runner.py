@@ -14,6 +14,12 @@ judo = "radata_vatten_judo.csv"
 sumo = "radata_vatten_sumo.csv"
 
 # datahandler omvandlar datan till ett värde per dygn
+#df = dh.dateMean(karate)
+#df = dh.nightMean(karate)
+#df = dh.dayMean(karate)
+#df = dh.dayHours(karate)
+#df = dh.nightHours(karate)
+df = dh.dateHours(kendo)
 
 df = dh.dateMean(karate)               # Ändra det här argumentet för att testa olika dataset
 
