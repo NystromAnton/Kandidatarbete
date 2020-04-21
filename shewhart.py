@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 
 #Funktion som genererar plottar som visar en shewhart control chart med övre och undre kontrollgränser
 #In: En dataframe
-#Out: Inget
-#Side effect: ritar upp plottar
+#Out: pandas.series med punkter out of control
+#Side effect: Lägger till tre kolumner: avg,UCL,LCL
 
 def shewhart(df):
     avg = df['Flow (l/s)'].mean()  #Räknar ut medelvärdet på "Flow (l/s)" columnen
@@ -28,13 +28,8 @@ def shewhart(df):
         LCL = avg - (3*std)                 #Beräknar om LCL
         if(a > len(df2['Flow (l/s)'])):     #Kollar om några datapunkter droppades detta varv
             lock = True                     #Låser lock för att köra ett varv till i loopen
-    ax = plt.gca()                          #Något för plottarna
+    print(df)
+    datapoints_out_of_control = df[(df['Flow (l/s)'] > UCL)|(df['Flow (l/s)'] < LCL) ].index #Tar ut alla index /dagar den är out of control.
     df['UCL'] = UCL                         #Skapar en column med UCL
     df['LCL'] = LCL                         #Skapar en column med LCL
-    df.plot(y='Flow (l/s)', color="blue",ax=ax)  #plottar flödesdatan från column "Flow (l/s)"
-    df.plot(y='avg', color='black', ax=ax)       #Plottar en medelvärdeslinje
-    df.plot(y='UCL', color='red', ax=ax)         #Plottar UCL
-    df.plot(y='LCL', color='red', ax=ax)         #Plottar LCL
-
-    #plt.show()                                   # Visa plotten
-    return
+    return datapoints_out_of_control        #Returnerar en pandas.series av alla index / dagar den är out of control
