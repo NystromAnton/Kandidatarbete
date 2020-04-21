@@ -26,6 +26,7 @@ def plotAll(df):
     # plot cusum
     ax = plt.subplot(gs[0, 1]) # row 0, col 1
     df.plot(y='cusum', color='green', ax=ax)                                    # Lägg till CUSUMen i plotten.
+    df.plot(y='v-mask', color='red', ax=ax, linewidth=2)                        # Gör de delar som är ur kontroll röda
     ax.set_title("Cusum")
     plt.gcf().autofmt_xdate()
 
