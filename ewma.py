@@ -28,7 +28,7 @@ def o_ewma(df):
     return datapoints_out_of_control
 
 
-#######################################
+####################################### Sådant som möjligtvis skulle kunna vara till hjälp om vi får data att träna på#############
 def o_ewma_train_test(df):
     rows = df.shape[0]
     train = round(rows* 0.7)
