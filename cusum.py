@@ -4,13 +4,17 @@ import matplotlib
 import matplotlib.pyplot as plt
 import math
 
+def get_dates(data):
+    datapoints_out_of_control = data[data['v-mask'] != 0].index #Tar ut alla index /dagar den är out of control.
+    return datapoints_out_of_control
+
 # Funktion som med hjälp av en v-mask identifierar när en cusum-kurva är ur kontroll.
 # Precondition: DataFramen måste innehålla en kolumn som heter 'cusum'
 # In: data = en DataFrame.
 # Out: None
 # Sideeffect: Lägger till en ny kolumn i DataFramen som heter 'v-mask'
 def v_mask(data):
-    data['v-mask'] = None
+    data['v-mask'] = 0
     delta = 1                                                                   # Delta är antal sigma som krävs för att masken ska reagera.
     k = delta/2                                                                 # Lutningen i v-maskens linjer.
     h = 8                                                                       # h och d är en del av en förskjutning i v-masken för att hantera type1/type 2 errors.
@@ -33,7 +37,7 @@ def v_mask(data):
 # Sideeffect: None
 def get_cusum(data):
     normalized = (data - data.mean()) / data.std()                              # Normalisera datan i kolumnen.
-    s = [0]                                                                     # Skapa en lista och sätt första värdet till 0.
+    s = [0]                                                                   # Skapa en lista och sätt första värdet till 0.
     for i in range(1, len(data)):                                               # Loopa igenom kolumnen.
         s.append(s[i-1] + normalized[i] - normalized.mean())                    # Räkna ut CUSUM värdet för den datapunkten och lgg till i listan.
     return pd.DataFrame(s)                                                      # Returnera CUSUMen som en DataFrame
@@ -46,12 +50,5 @@ def get_cusum(data):
 def cusum(df):
     df['cusum'] = get_cusum(df['Flow (l/s)']).set_index(df.index)               # Skapa en ny kolumn i DataFramen som heter 'cusum'. set_index synkar indexeringen på den nya kolumnen och DataFramen så att de är samma.
     v_mask(df)                                                                  # Applicera v-masken på dataframen. En ny kolumn som heter 'v-mask' skapas i df.
-
-    ax = plt.gca()                                                              # Nåt med axlarna för ploten
-
-
-    df.plot(y='cusum', color='green', ax=ax)                                    # Lägg till CUSUMen i plotten.
-    df.plot(y='v-mask', color='red', ax=ax, linewidth=2)                        # Gör de delar som är ur kontroll röda
-
-    #plt.show()                                                                  # Visa plotten
-    return
+    dates = get_dates(df)
+    return dates
