@@ -8,45 +8,27 @@ import math
 
 
 
-
+#Funktion som använder sig av ett EWMA styrdiagram
+#In: En dataframe
+#Out: pandas.series med punkter out of control
+#Side effect: Lägger till tre kolumner: EWMA, UCL_EWMA, LCL_EWMA
 def o_ewma(df):
-    print(df)
-    data = df['Flow (l/s)']                     # Plocka ut kolumnen med originaldatan. Vet inte om man ska göra detta på originaldatan eller flytande dygn egentligen.
-    avg_ewma = data.mean()
-    std_ewma = data.std()
-    alpha = 0.3
-    dataEWMA = data.ewm(alpha=alpha, adjust=False).mean()          # Räkna ut EWMA. Com är typ en skalär vet inte riktig hur viktig den är. Det verkar kanske vara lite som man själv vill.
-
-    df['EWMA'] = dataEWMA                          # Skapa en ny kolumn i DataFramen som är EWMA
-    s_ewma = math.sqrt((alpha/(2-alpha))*(std_ewma**2))
-    ewma_ucl = avg_ewma + 3*s_ewma
-    ewma_lcl = avg_ewma - 3*s_ewma
-    df['UCL_EWMA'] = ewma_ucl
-    df['LCL_EWMA'] = ewma_lcl
-
-    count_row = range(df.shape[0])
-    print(count_row)
-    df['num_rows'] = count_row
-    print(df)
-    indexNames = df[(df['EWMA'] > ewma_ucl)|(df['EWMA'] < ewma_lcl) ].num_rows
-    print(indexNames)
-    print(type(indexNames))
-
-    ax = plt.gca()                                 # Axlarna för ploten
-    #df.plot(y='Flow (l/s)', color="blue",ax=ax)    # Plotta originaldatan
-    df.plot(y='EWMA', color='green', ax=ax)         # Plotta EWMA
-    df.plot(y='UCL_EWMA', color='red', ax=ax)
-    df.plot(y='LCL_EWMA', color='red', ax=ax)
-
-    for i in indexNames:
-        ax.axvline(x=i, color="purple", linestyle="--")
+    data = df['Flow (l/s)']    #Plockar ut flow kolumnen               
+    avg_ewma = data.mean()     #Beräknar average på flow
+    std_ewma = data.std()      #Beräknar standardavvikelsen på flow
+    alpha = 0.3                #Vägningsfaktor. Brukar vara mellan 0.2 och 0.3 generellt.
+    dataEWMA = data.ewm(alpha=alpha, adjust=False).mean()          #Skapar en EWMA från flow
+    df['EWMA'] = dataEWMA                                          #Lägger till denna data i en kolumn
+    s_ewma = math.sqrt((alpha/(2-alpha))*(std_ewma**2))            #En formel för att beräkna variansen på en EWMA
+    ewma_ucl = avg_ewma + 3*s_ewma                                 #Beräknar detta styrdiagrams upper control limit
+    ewma_lcl = avg_ewma - 3*s_ewma                                 #Beräknar detta styrdiagrams lower control limit
+    df['UCL_EWMA'] = ewma_ucl                                      #Lägger in UCL i en egen kolumn
+    df['LCL_EWMA'] = ewma_lcl                                      #Lägger in LCL i en egen kolumn
+    datapoints_out_of_control = df[(df['EWMA'] > ewma_ucl)|(df['EWMA'] < ewma_lcl) ].index #Tar ut alla index /dagar den är out of control.
+    return datapoints_out_of_control
 
 
-    #plt.show()
-    return
-
-
-
+####################################### Sådant som möjligtvis skulle kunna vara till hjälp om vi får data att träna på#############
 def o_ewma_train_test(df):
     rows = df.shape[0]
     train = round(rows* 0.7)
