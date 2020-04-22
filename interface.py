@@ -27,7 +27,7 @@ class App(tk.Tk):
         stack.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-        #for F in (startPage, analysisPage, PageTwo):
+        #for F in (startPage, analysisPage, PageTwo): #OBS den här raden om vi ska ha en frame till
         for F in (startPage, analysisPage):
             page_name = F.__name__
             frame = F(parent=stack, controller=self)
@@ -46,9 +46,6 @@ class App(tk.Tk):
 class startPage(tk.Frame):
 
     path = ""
-
-
-
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
@@ -83,7 +80,6 @@ class startPage(tk.Frame):
         #button2 = tk.Button(self, text="Go to Page Two", command=lambda: controller.show_frame("PageTwo"))
         #button2.pack()
 
-
 class analysisPage(tk.Frame):
 
     def __init__(self, parent, controller):
@@ -91,8 +87,7 @@ class analysisPage(tk.Frame):
         self.controller = controller
         label = tk.Label(self, text="Analys", font=controller.title_font)
         label.pack(side="top", fill="x", pady=10)
-        button = tk.Button(self, text="Tillbaka till startsidan",
-                           command=lambda: controller.show_frame("startPage"))
+        button = tk.Button(self, text="Tillbaka till startsidan", command=lambda: controller.show_frame("startPage"))
         button.pack()
 
 # Om vi behöver en till page:
@@ -103,10 +98,8 @@ class analysisPage(tk.Frame):
         self.controller = controller
         label = tk.Label(self, text="This is page 2", font=controller.title_font)
         label.pack(side="top", fill="x", pady=10)
-        button = tk.Button(self, text="Go to the start page",
-                           command=lambda: controller.show_frame("startPage"))
+        button = tk.Button(self, text="Go to the start page", command=lambda: controller.show_frame("startPage"))
         button.pack()"""
-
 
 if __name__ == "__main__":
     App = App()
