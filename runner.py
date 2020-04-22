@@ -27,6 +27,7 @@ s.shewhart(df)                         # Kalla på shewhart funktionen. Den komm
 c.cusum(df)                            # Kalla på cusum funktionen. Den kommer plotta cusum och lägga till det i DataFramen.
 e.o_ewma(df)                              # Kalla på ewma funktionen. Den kommer plotta EWMA och lägga till det i DataFramen.
 
+#gh.plotShewhart(df)
 gh.plotAll(df)
 
 print(df)
