@@ -8,6 +8,14 @@ import tkinter as tk
 from tkinter import font as tkfont
 from tkinter import filedialog
 
+from matplotlib.backends.backend_tkagg import (
+    FigureCanvasTkAgg, NavigationToolbar2Tk)
+# Implement the default Matplotlib key bindings.
+from matplotlib.backend_bases import key_press_handler
+from matplotlib.figure import Figure
+
+import numpy as np
+
 class App(tk.Tk):
 
     def __init__(self):
@@ -89,6 +97,18 @@ class analysisPage(tk.Frame):
         A.pack()"""
         df = dh.nightHours(self.controller.shared_data["dataPath"])
         print(df)
+
+        fig = Figure(figsize=(5, 4), dpi=100)
+        t = np.arange(0, 3, .01)
+        fig.add_subplot(111).plot(t, 2 * np.sin(2 * np.pi * t))
+
+        canvas = FigureCanvasTkAgg(fig, master=self)  # A tk.DrawingArea.
+        canvas.draw()
+        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+        """
+        toolbar = NavigationToolbar2Tk(canvas, root)
+        toolbar.update()
+        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)"""
 
     def on_show_frame(self, event):
         self.calcShow()
