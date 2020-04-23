@@ -19,6 +19,10 @@ class App(tk.Tk):
         self.geometry("500x500")
         self.title('Vattenläckor interface')
 
+        self.shared_data = {
+            "patherino": tk.StringVar()
+        }
+
 
         # På stacken ligger frames, den frame som är högst upp är den som syns.
         # Så för att visa olika vyer (pages) flyttar man vilken som är högst upp
@@ -44,22 +48,34 @@ class App(tk.Tk):
         frame.tkraise()
         frame.event_generate("<<ShowFrame>>")
 
+    def get_page(self, page_class):
+        return self.frames[page_class]
+
 class startPage(tk.Frame):
 
-    path = ""
+    #self.path = ""
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
         label = tk.Label(self, text="Startsida", font=controller.title_font)
         label.pack(side="top", fill="x", pady=10)
-
+        #self.path = ""
         def explorer():
-            global path
-            path =  filedialog.askopenfilename(initialdir = "C:/Users/User/Documents/Kandidat/Data",title = "Select file")
+            #global path
+            #self.path = filedialog.askopenfilename(initialdir = "C:/Users/User/Documents/Kandidat/Data",title = "Select file")
+            self.controller.shared_data["patherino"] = filedialog.askopenfilename(initialdir = "C:/Users/User/Documents/Kandidat/Data",title = "Select file")
             T.delete(1.0,"end")
-            T.insert(1.0,path)
+            #T.insert(1.0, self.path)
+            T.insert(1.0, self.controller.shared_data["patherino"])
             #bShow.pack()
             bAnalysis.pack()
+
+
+        #patri = self.controller.shared_data["patherino"].get()
+        #print(patri)
+
+        #self.controller.shared_data["patherino"] = self.path
+        #print(self.controller.shared_data["patherino"])
 
         #def calcShow():
         #    print(path)
@@ -108,13 +124,15 @@ class analysisPage(tk.Frame):
         bBack = tk.Button(self, text="Tillbaka till startsidan", command=lambda: controller.show_frame("startPage"))
         bBack.pack()
 #bShow = tk.Button(self, text ="Räkna ut", command = calcShow)
-    
-    def calcShow(self): # Allt funkar förutom att den inte hittar pathen
-        global path
+
+    def calcShow(self): # Allt funkar förutom att pathen är tom
+        #global path
+        print(self.controller.shared_data["patherino"])
         print("här är den")
-        print(startPage.path)
+        #print(startPage.path)
         print("där var den")
-        df = dh.nightHours(startPage.path)
+        #df = dh.nightHours(startPage.path)
+        df = dh.nightHours(self.controller.shared_data["patherino"])
         print(df)
 
     def on_show_frame(self, event):
