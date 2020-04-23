@@ -14,7 +14,8 @@ class App(tk.Tk):
         #tk.Tk.__init__(self, *args, **kwargs)
     def __init__(self):
         tk.Tk.__init__(self)
-        self.title_font = tkfont.Font(family='Helvetica', size=18, weight="bold", slant="italic")
+        #self.title_font = tkfont.Font(family='Helvetica', size=18, weight="bold", slant="italic")
+        self.title_font = tkfont.Font(family='Helvetica', size=18)
         self.geometry("500x500")
         self.title('Vattenläckor interface')
 
@@ -41,7 +42,7 @@ class App(tk.Tk):
         '''Show a frame for the given page name'''
         frame = self.frames[page_name]
         frame.tkraise()
-
+        frame.event_generate("<<ShowFrame>>")
 
 class startPage(tk.Frame):
 
@@ -57,14 +58,15 @@ class startPage(tk.Frame):
             path =  filedialog.askopenfilename(initialdir = "C:/Users/User/Documents/Kandidat/Data",title = "Select file")
             T.delete(1.0,"end")
             T.insert(1.0,path)
-            bShow.pack()
-
-        def calcShow():
-            print(path)
-            df = dh.nightHours(path)
-            print(df)
+            #bShow.pack()
             bAnalysis.pack()
-            #plot here anton
+
+        #def calcShow():
+        #    print(path)
+        #    df = dh.nightHours(path)
+        #    print(df)
+        #    bAnalysis.pack()
+            #plot here anton"""
 
         bChoose = tk.Button(self, text ="Välj fil", command = explorer)
         bChoose.pack()
@@ -73,22 +75,52 @@ class startPage(tk.Frame):
         T.insert(1.0,"Vald fil..")
         T.pack()
 
-        bShow = tk.Button(self, text ="Räkna ut", command = calcShow)
-        bAnalysis = tk.Button(self, text="Visa analys", command=lambda: controller.show_frame("analysisPage"))
+        #bShow = tk.Button(self, text ="Räkna ut", command = calcShow)
+        bAnalysis = tk.Button(self, text="Analysera", command=lambda: controller.show_frame("analysisPage"))
 
         # Om vi behöver en till page:
         #button2 = tk.Button(self, text="Go to Page Two", command=lambda: controller.show_frame("PageTwo"))
         #button2.pack()
 
 class analysisPage(tk.Frame):
-
+    # Error pathen är tom här
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
         label = tk.Label(self, text="Analys", font=controller.title_font)
         label.pack(side="top", fill="x", pady=10)
-        button = tk.Button(self, text="Tillbaka till startsidan", command=lambda: controller.show_frame("startPage"))
-        button.pack()
+
+        self.bind("<<ShowFrame>>", self.on_show_frame)
+
+        """def calcShow():
+            global path
+            print("här är den")
+            print(startPage.path)
+            print("där var den")
+            df = dh.nightHours(startPage.path)
+            print(df)"""
+            #bAnalysis.pack()
+
+        #calcShow()
+        #bShow = tk.Button(self, text ="Räkna ut", command = calcShow)
+        #bShow.pack()
+
+        bBack = tk.Button(self, text="Tillbaka till startsidan", command=lambda: controller.show_frame("startPage"))
+        bBack.pack()
+#bShow = tk.Button(self, text ="Räkna ut", command = calcShow)
+    
+    def calcShow(self): # Allt funkar förutom att den inte hittar pathen
+        global path
+        print("här är den")
+        print(startPage.path)
+        print("där var den")
+        df = dh.nightHours(startPage.path)
+        print(df)
+
+    def on_show_frame(self, event):
+        print("I am being shown...")
+        self.calcShow()
+
 
 # Om vi behöver en till page:
 """class PageTwo(tk.Frame):
