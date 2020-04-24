@@ -8,6 +8,7 @@ import graphicshandler as gh
 import tkinter as tk
 from tkinter import font as tkfont
 from tkinter import filedialog
+from tkinter import ttk
 
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
@@ -101,26 +102,26 @@ class analysisPage(tk.Frame):
         df = dh.nightHours(self.controller.shared_data["dataPath"])
         print(df)
 
-        fig = Figure(figsize=(5, 4), dpi=100)
-        t = np.arange(0, 3, .01)
-        fig.add_subplot(111).plot(t, 2 * np.sin(2 * np.pi * t))
-        ###########################################################
-        """ax = plt.gca()                          #Något för plottarna
+        #fig = Figure(figsize=(5, 4), dpi=100)
+        #t = np.arange(0, 3, .01)
+        #fig.add_subplot(111).plot(t, 2 * np.sin(2 * np.pi * t))
 
-        gs = gridspec.GridSpec(2, 2) # Create 2x2 sub plot
+        #ax = plt.gca()                          #Något för plottarna
+        #df.plot(y='Flow (l/s)', color="blue",ax=ax)  #plottar flödesdatan från column "Flow (l/s)"
+        #df.plot(y='avg', color='black', ax=ax)       #Plottar en medelvärdeslinje
+        #df.plot(y='UCL', color='red', ax=ax)         #Plottar UCL
+        #df.plot(y='LCL', color='red', ax=ax)         #Plottar LCL
+        #plt.show()
 
-        # plot shewhart
-        ax = plt.subplot(gs[0, 0]) # row 0, col 0
-        df.plot(y='Flow (l/s)', color='blue', ax=ax)  #plottar flödesdatan från column "Flow (l/s)"
-        df.plot(y='avg', color='black', ax=ax)       #Plottar en medelvärdeslinje
-        df.plot(y='UCL', color='red', ax=ax)         #Plottar UCL
-        df.plot(y='LCL', color='red', ax=ax)         #Plottar LCL
-        ax.set_title("Shewhart")
-        plt.gcf().autofmt_xdate()"""
-        #########################################################
+        fig = plt.figure(figsize=(6,5), dpi=100)
+        ax1 = fig.add_subplot(111)
+
+
         canvas = FigureCanvasTkAgg(fig, master=self)  # A tk.DrawingArea. # Stod root istället för self innan
-        canvas.draw()
+        #canvas.draw()
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+        df.plot(y='Flow (l/s)', legend=True, ax=ax1)
+        #df.plot(y='UCL', legend=True, ax=ax1)
 
         toolbar = NavigationToolbar2Tk(canvas, self) # Stod root istället för self innan
         toolbar.update()
