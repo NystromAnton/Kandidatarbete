@@ -121,13 +121,13 @@ class analysisPage(tk.Frame):
 
         canvas = FigureCanvasTkAgg(fig, master=self)  # A tk.DrawingArea. # Stod root istället för self innan
         canvas.draw()
-        canvas.get_tk_widget().pack#df.plot(y='avg', color='black', ax=ax)       #Plottar en medelvärdeslinje
-        #df.plot(y='UCL', color='red', ax=ax)         #Plottar UCL
-        #df.plot(y='LCL', color='red', ax=ax)         #Plottar LCL(side=tk.TOP, fill=tk.BOTH, expand=1)
-        df.plot(y='Flow (l/s)', legend=True, ax=ax1)
+        # Med argument i pack nedan ser grafen rätt ut men ingen navigation bar kommer
+        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+        df.plot(y='Flow (l/s)', color='blue', ax=ax1)
         df.plot(y='avg', color='black', ax=ax1)       #Plottar en medelvärdeslinje
         df.plot(y='UCL', color='red', ax=ax1)         #Plottar UCL
         df.plot(y='LCL', color='red', ax=ax1)         #Plottar LCL
+        plt.title("Shewhart")
 
         toolbar = NavigationToolbar2Tk(canvas, self) # Stod root istället för self innan
         toolbar.update()
