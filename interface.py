@@ -102,6 +102,8 @@ class analysisPage(tk.Frame):
         df = dh.nightHours(self.controller.shared_data["dataPath"])
         print(df)
 
+        s.shewhart(df)
+
         #fig = Figure(figsize=(5, 4), dpi=100)
         #t = np.arange(0, 3, .01)
         #fig.add_subplot(111).plot(t, 2 * np.sin(2 * np.pi * t))
@@ -118,10 +120,14 @@ class analysisPage(tk.Frame):
 
 
         canvas = FigureCanvasTkAgg(fig, master=self)  # A tk.DrawingArea. # Stod root istället för self innan
-        #canvas.draw()
-        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+        canvas.draw()
+        canvas.get_tk_widget().pack#df.plot(y='avg', color='black', ax=ax)       #Plottar en medelvärdeslinje
+        #df.plot(y='UCL', color='red', ax=ax)         #Plottar UCL
+        #df.plot(y='LCL', color='red', ax=ax)         #Plottar LCL(side=tk.TOP, fill=tk.BOTH, expand=1)
         df.plot(y='Flow (l/s)', legend=True, ax=ax1)
-        #df.plot(y='UCL', legend=True, ax=ax1)
+        df.plot(y='avg', color='black', ax=ax1)       #Plottar en medelvärdeslinje
+        df.plot(y='UCL', color='red', ax=ax1)         #Plottar UCL
+        df.plot(y='LCL', color='red', ax=ax1)         #Plottar LCL
 
         toolbar = NavigationToolbar2Tk(canvas, self) # Stod root istället för self innan
         toolbar.update()
