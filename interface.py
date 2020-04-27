@@ -95,7 +95,7 @@ class analysisPage(tk.Frame):
         self.bind("<<ShowFrame>>", self.on_show_frame) # Används för att on_show_frame funktionen ska köras när den här framen blir synlig
 
     def calcShow(self):
-        df = dh.nightHours(self.controller.shared_data["dataPath"])
+        df = dh.dateMean(self.controller.shared_data["dataPath"])
         print(df)
 
         s.shewhart(df)
@@ -108,10 +108,9 @@ class analysisPage(tk.Frame):
         ##canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
         figure1, (ax1, ax2, ax3) = plt.subplots(1, 3)
-        bar1 = FigureCanvasTkAgg(figure1, self)
-        bar1.get_tk_widget().pack(expand=True, fill="x")
+        #bar1 = FigureCanvasTkAgg(figure1, self)
+        #bar1.get_tk_widget().pack(expand=True, fill="x")
         #bar1.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)
-        #df1 = df1[['Country','GDP_Per_Capita']].groupby('Country').sum()
         df.plot(y='Flow (l/s)', color='blue', ax=ax1)
         df.plot(y='avg', color='black', ax=ax1)       #Plottar en medelvärdeslinje
         df.plot(y='UCL', color='red', ax=ax1)         #Plottar UCL
@@ -128,13 +127,13 @@ class analysisPage(tk.Frame):
         ax2.set_title('CUSUM')
         ax3.set_title('EWMA')
 
-        #canvas = FigureCanvasTkAgg(figure1, master=self)  # A tk.DrawingArea.
+        canvas = FigureCanvasTkAgg(figure1, master=self)  # A tk.DrawingArea.
         #canvas.draw()
-        #canvas.get_tk_widget().pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=1)
+        #canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
-        #toolbar = NavigationToolbar2Tk(canvas, self) # Stod root istället för self innan
-        #toolbar.update()
-        #figure1.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+        toolbar = NavigationToolbar2Tk(canvas, self) # Stod root istället för self innan
+        toolbar.update()
+        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
     def on_show_frame(self, event):
         self.calcShow()
