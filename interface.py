@@ -25,7 +25,7 @@ class App(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
         self.title_font = tkfont.Font(family='Helvetica', size=18, weight="bold", slant="italic")
-        self.geometry("500x500")
+        self.geometry("700x500")
         self.title('Vattenläckor interface')
 
         self.shared_data = { # Delad data som alla frames kan komma åt
@@ -95,43 +95,46 @@ class analysisPage(tk.Frame):
         self.bind("<<ShowFrame>>", self.on_show_frame) # Används för att on_show_frame funktionen ska köras när den här framen blir synlig
 
     def calcShow(self):
-        #print(self.controller.shared_data["dataPath"])
-        """A = tk.Text(self, height=2, width=60)
-        A.insert(1.0,"Beräknar...")
-        A.pack()"""
         df = dh.nightHours(self.controller.shared_data["dataPath"])
         print(df)
 
         s.shewhart(df)
+        c.cusum(df)
+        e.o_ewma(df)
 
-        #fig = Figure(figsize=(5, 4), dpi=100)
-        #t = np.arange(0, 3, .01)
-        #fig.add_subplot(111).plot(t, 2 * np.sin(2 * np.pi * t))
-
-        #ax = plt.gca()                          #Något för plottarna
-        #df.plot(y='Flow (l/s)', color="blue",ax=ax)  #plottar flödesdatan från column "Flow (l/s)"
-        #df.plot(y='avg', color='black', ax=ax)       #Plottar en medelvärdeslinje
-        #df.plot(y='UCL', color='red', ax=ax)         #Plottar UCL
-        #df.plot(y='LCL', color='red', ax=ax)         #Plottar LCL
-        #plt.show()
-
-        fig = plt.figure(figsize=(6,5), dpi=100)
-        ax1 = fig.add_subplot(111)
-
-
-        canvas = FigureCanvasTkAgg(fig, master=self)  # A tk.DrawingArea. # Stod root istället för self innan
-        canvas.draw()
+        #canvas = FigureCanvasTkAgg(fig, master=self)  # A tk.DrawingArea. # Stod root istället för self innan
+        #canvas.draw()
         # Med argument i pack nedan ser grafen rätt ut men ingen navigation bar kommer
-        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+        ##canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+
+        figure1, (ax1, ax2, ax3) = plt.subplots(1, 3)
+        bar1 = FigureCanvasTkAgg(figure1, self)
+        bar1.get_tk_widget().pack(expand=True, fill="x")
+        #bar1.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)
+        #df1 = df1[['Country','GDP_Per_Capita']].groupby('Country').sum()
         df.plot(y='Flow (l/s)', color='blue', ax=ax1)
         df.plot(y='avg', color='black', ax=ax1)       #Plottar en medelvärdeslinje
         df.plot(y='UCL', color='red', ax=ax1)         #Plottar UCL
         df.plot(y='LCL', color='red', ax=ax1)         #Plottar LCL
-        plt.title("Shewhart")
 
-        toolbar = NavigationToolbar2Tk(canvas, self) # Stod root istället för self innan
-        toolbar.update()
-        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+        df.plot(y='cusum', color='green', ax=ax2)                                    # Lägg till CUSUMen i plotten.
+        df.plot(y='v-mask', color='red', ax=ax2, linewidth=2)                        # Gör de delar som är ur kontroll röda
+
+        df.plot(y='EWMA', color='green', ax=ax3)         # Plotta EWMA
+        df.plot(y='UCL_EWMA', color='red', ax=ax3)
+        df.plot(y='LCL_EWMA', color='red', ax=ax3)
+
+        ax1.set_title('Shewhart')
+        ax2.set_title('CUSUM')
+        ax3.set_title('EWMA')
+
+        #canvas = FigureCanvasTkAgg(figure1, master=self)  # A tk.DrawingArea.
+        #canvas.draw()
+        #canvas.get_tk_widget().pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=1)
+
+        #toolbar = NavigationToolbar2Tk(canvas, self) # Stod root istället för self innan
+        #toolbar.update()
+        #figure1.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
     def on_show_frame(self, event):
         self.calcShow()
