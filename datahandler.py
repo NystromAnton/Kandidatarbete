@@ -21,9 +21,9 @@ def converter(path):
     df['Date'] = pd.to_datetime(df['Date'] + ' ' + df['Time'])          # Converterar columnerna 'Date' och 'Time' från object till datetime64
     df.drop(['Time'], axis=1, inplace=True)                             # Tar bort column 'Time'
 
-    end = process_time()    
+    end = process_time()
     elapsed = end - start
-    print("Converter: " + str(elapsed))
+    #print("Converter: " + str(elapsed))
     return df
 
 
@@ -41,8 +41,8 @@ def dateMean(path):
 
     df_sorted = df.groupby(df['Date'].dt.date).mean()       # Grupperar df för dag och tar medelvärdet
 
-    end = process_time()    
-    print("dateMean: " + str(end - start))
+    end = process_time()
+    #print("dateMean: " + str(end - start))
 
     return df_sorted
 
@@ -60,25 +60,25 @@ def nightMean(path):
     start = process_time()
 
     dfSize = df.groupby(df['Date'].dt.date).size()                       # Summerar alla datapunkter med samma datum
-    indexHour = [5, 6, 7, 8, 9, 10, 11, 12, 13, 
+    indexHour = [5, 6, 7, 8, 9, 10, 11, 12, 13,
                 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]                  # Alla timmar från 0-23 som ska bort
     dfResult = pd.DataFrame()                                            # df som ska retuneras
 
     indexMin = 0
-    indexMax = 0    
+    indexMax = 0
     for i in range(len(dfSize)):
         indexMin = indexMax
-        indexMax = indexMin + dfSize.iloc[i]                             
-        dfMean = df.iloc[indexMin:indexMax]        
+        indexMax = indexMin + dfSize.iloc[i]
+        dfMean = df.iloc[indexMin:indexMax]
         dfMean = dfMean.groupby(dfMean['Date'].dt.hour).mean()                                  # Datum 'i' grupperas i timmar
-        if len(dfMean) == 24:                                           
-            dfMean.drop(dfMean.index[indexHour], axis=0, inplace=True)                          # Timmarna tas bort 
+        if len(dfMean) == 24:
+            dfMean.drop(dfMean.index[indexHour], axis=0, inplace=True)                          # Timmarna tas bort
             dfData = pd.DataFrame({"Flow (l/s)":dfMean.mean()[0]}, index = [dfSize.index[i]])   # Skapar en df med index datum 'i' och column 'Flow (l/s)' för timme 'j'
             dfResult = dfResult.append(dfData)                                                  # Appendar df på dfResult
         else:
             break                                                                               # Räknar inte med den sista dagen
 
-    end = process_time()    
+    end = process_time()
     print("nightMean: " + str(end - start))
 
 
@@ -98,25 +98,25 @@ def dayMean(path):
     start = process_time()
 
     dfSize = df.groupby(df['Date'].dt.date).size()                       # Summerar alla datapunkter med samma datum
-    indexHour = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 
+    indexHour = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
                 17, 18, 19, 20, 21, 22, 23]                              # Alla timmar från 0-23 som ska bort
     dfResult = pd.DataFrame()                                            # df som ska retuneras
 
     indexMin = 0
-    indexMax = 0    
+    indexMax = 0
     for i in range(len(dfSize)):
         indexMin = indexMax
-        indexMax = indexMin + dfSize.iloc[i]                             
-        dfMean = df.iloc[indexMin:indexMax]        
+        indexMax = indexMin + dfSize.iloc[i]
+        dfMean = df.iloc[indexMin:indexMax]
         dfMean = dfMean.groupby(dfMean['Date'].dt.hour).mean()                                  # Datum 'i' grupperas i timmar
-        if len(dfMean) == 24:                                           
-            dfMean.drop(dfMean.index[indexHour], axis=0, inplace=True)                          # Timmarna tas bort                          
+        if len(dfMean) == 24:
+            dfMean.drop(dfMean.index[indexHour], axis=0, inplace=True)                          # Timmarna tas bort
             dfData = pd.DataFrame({"Flow (l/s)":dfMean.mean()[0]}, index = [dfSize.index[i]])   # Skapar en df med index datum 'i' och column 'Flow (l/s)' för timme 'j'
             dfResult = dfResult.append(dfData)                                                  # Appendar df på dfResult
         else:
             break                                                                               # Räknar inte med den sista dagen
 
-    end = process_time()    
+    end = process_time()
     print("dayMean: " + str(end - start))
 
     return dfResult
@@ -135,15 +135,15 @@ def dayHours(path):
     start = process_time()
 
     dfSize = df.groupby(df['Date'].dt.date).size()                       # Summerar alla datapunkter med samma datum
-    indexHour = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 
+    indexHour = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17,
                 18, 19, 20, 21, 22, 23]                                  # Alla timmar från 0-23 som ska bort
     dfResult = pd.DataFrame()                                            # df som ska retuneras
 
     indexMin = 0
-    indexMax = 0    
+    indexMax = 0
     for i in range(len(dfSize)):
         indexMin = indexMax
-        indexMax = indexMin + dfSize.iloc[i]                             
+        indexMax = indexMin + dfSize.iloc[i]
         dfMean = df.iloc[indexMin:indexMax]
         dfMean = dfMean.groupby(dfMean['Date'].dt.hour).mean()           # Datum 'i' grupperas i timmar
 
@@ -154,7 +154,7 @@ def dayHours(path):
 
         dtArray = dfSize.index                                           # Tar fram datumet för datum 'i'
         tmArray = dfMean.index                                           # Tar fram datumet för datum 'i'
-        for j in range(len(dfMean)):                                     
+        for j in range(len(dfMean)):
             data = dfMean.iloc[j][0]                                          # Data för timme 'j'
             dt = dtArray[i]                                                   # Tar fram datumet för datum 'i'
             tm = time(tmArray[j])
@@ -163,7 +163,7 @@ def dayHours(path):
             dfResult = dfResult.append(dfData)                                # Appendar df på dfResult
 
 
-    end = process_time()    
+    end = process_time()
     print("dayHours: " + str(end - start))
 
     return dfResult
@@ -182,15 +182,15 @@ def nightHours(path):
     start = process_time()
 
     dfSize = df.groupby(df['Date'].dt.date).size()                       # Summerar alla datapunkter med samma datum
-    indexHour = [5, 6, 7, 8, 9, 10, 11, 12, 13, 
+    indexHour = [5, 6, 7, 8, 9, 10, 11, 12, 13,
                 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]                  # Alla timmar från 0-23 som ska bort
     dfResult = pd.DataFrame()                                            # df som ska retuneras
 
     indexMin = 0
-    indexMax = 0    
+    indexMax = 0
     for i in range(len(dfSize)):
         indexMin = indexMax
-        indexMax = indexMin + dfSize.iloc[i]                             
+        indexMax = indexMin + dfSize.iloc[i]
         dfMean = df.iloc[indexMin:indexMax]
         dfMean = dfMean.groupby(dfMean['Date'].dt.hour).mean()           # Datum 'i' grupperas i timmar
 
@@ -201,7 +201,7 @@ def nightHours(path):
 
         dtArray = dfSize.index                                           # Tar fram datumet för datum 'i'
         tmArray = dfMean.index                                           # Tar fram datumet för datum 'i'
-        for j in range(len(dfMean)):                                     
+        for j in range(len(dfMean)):
             data = dfMean.iloc[j][0]                                          # Data för timme 'j'
             dt = dtArray[i]                                                   # Tar fram datumet för datum 'i'
             tm = time(tmArray[j])
@@ -210,7 +210,7 @@ def nightHours(path):
             dfResult = dfResult.append(dfData)                                # Appendar df på dfResult
 
 
-    end = process_time()    
+    end = process_time()
     print("nightHours: " + str(end - start))
 
     return dfResult
@@ -235,13 +235,13 @@ def dateHours(path):
     indexMax = 0
     for i in range(len(dfSize)):
         indexMin = indexMax
-        indexMax = indexMin + dfSize.iloc[i]                             
-        dfMean = df.iloc[indexMin:indexMax]                             
+        indexMax = indexMin + dfSize.iloc[i]
+        dfMean = df.iloc[indexMin:indexMax]
         dfMean = dfMean.groupby(dfMean['Date'].dt.hour).mean()           # Datum 'i' grupperas i timmar
 
         dtArray = dfSize.index                                           # Tar fram datumet för datum 'i'
         tmArray = dfMean.index                                           # Tar fram datumet för datum 'i'
-        for j in range(len(dfMean)):                                     
+        for j in range(len(dfMean)):
             data = dfMean.iloc[j][0]                                          # Data för timme 'j'
             dt = dtArray[i]                                                   # Tar fram datumet för datum 'i'
             tm = time(tmArray[j])
@@ -249,7 +249,7 @@ def dateHours(path):
             dfData = pd.DataFrame({"Flow (l/s)":data}, index = [indexDate])   # Skapar en df med index datum 'i' och column 'Flow (l/s)' för timme 'j'
             dfResult = dfResult.append(dfData)                                # Appendar df på dfResult
 
-    end = process_time()    
+    end = process_time()
     print("dateHours: " + str(end - start))
 
     return dfResult

@@ -28,7 +28,7 @@ def shewhart(df):
         LCL = avg - (3*std)                 #Beräknar om LCL
         if(a > len(df2['Flow (l/s)'])):     #Kollar om några datapunkter droppades detta varv
             lock = True                     #Låser lock för att köra ett varv till i loopen
-    print(df)
+    #print(df)
     datapoints_out_of_control = df[(df['Flow (l/s)'] > UCL)|(df['Flow (l/s)'] < LCL) ].index #Tar ut alla index /dagar den är out of control.
     df['UCL'] = UCL                         #Skapar en column med UCL
     df['LCL'] = LCL                         #Skapar en column med LCL
