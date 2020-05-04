@@ -13,7 +13,7 @@ import math
 #Out: pandas.series med punkter out of control
 #Side effect: Lägger till tre kolumner: EWMA, UCL_EWMA, LCL_EWMA
 def o_ewma(df):
-    data = df['Flow (l/s)']    #Plockar ut flow kolumnen               
+    data = df['Flow (l/s)']    #Plockar ut flow kolumnen
     avg_ewma = data.mean()     #Beräknar average på flow
     std_ewma = data.std()      #Beräknar standardavvikelsen på flow
     alpha = 0.3                #Vägningsfaktor. Brukar vara mellan 0.2 och 0.3 generellt.
@@ -79,7 +79,7 @@ def o_ewma_train_test(df):
 def linreg(df):
     from sklearn import datasets, linear_model
     from sklearn.model_selection import train_test_split
-    print("hej")
+    #print("hej")
     y = df['Flow (l/s)']
     X_train, X_test, y_train, y_test = train_test_split(df, y, test_size=0.2)
 

@@ -96,21 +96,14 @@ class analysisPage(tk.Frame):
 
     def calcShow(self):
         df = dh.dateMean(self.controller.shared_data["dataPath"])
-        print(df)
+        #print(df)
 
         s.shewhart(df)
         c.cusum(df)
         e.o_ewma(df)
 
-        #canvas = FigureCanvasTkAgg(fig, master=self)  # A tk.DrawingArea. # Stod root istället för self innan
-        #canvas.draw()
-        # Med argument i pack nedan ser grafen rätt ut men ingen navigation bar kommer
-        ##canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+        fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
 
-        figure1, (ax1, ax2, ax3) = plt.subplots(1, 3)
-        #bar1 = FigureCanvasTkAgg(figure1, self)
-        #bar1.get_tk_widget().pack(expand=True, fill="x")
-        #bar1.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)
         df.plot(y='Flow (l/s)', color='blue', ax=ax1)
         df.plot(y='avg', color='black', ax=ax1)       #Plottar en medelvärdeslinje
         df.plot(y='UCL', color='red', ax=ax1)         #Plottar UCL
@@ -123,15 +116,15 @@ class analysisPage(tk.Frame):
         df.plot(y='UCL_EWMA', color='red', ax=ax3)
         df.plot(y='LCL_EWMA', color='red', ax=ax3)
 
+        fig.autofmt_xdate()
+
         ax1.set_title('Shewhart')
         ax2.set_title('CUSUM')
         ax3.set_title('EWMA')
 
-        canvas = FigureCanvasTkAgg(figure1, master=self)  # A tk.DrawingArea.
-        #canvas.draw()
-        #canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+        canvas = FigureCanvasTkAgg(fig, master=self)  # A tk.DrawingArea.
 
-        toolbar = NavigationToolbar2Tk(canvas, self) # Stod root istället för self innan
+        toolbar = NavigationToolbar2Tk(canvas, self) # Navigationbar för att kunna zooma och spara plotten mm
         toolbar.update()
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
