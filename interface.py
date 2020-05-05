@@ -83,8 +83,8 @@ class startPage(tk.Frame):
         # Om vi behöver en till page:
         #button2 = tk.Button(self, text="Go to Page Two", command=lambda: controller.show_frame("PageTwo"))
         #button2.pack()
-        labelTop = tk.Label(self, height=4, width=60, text = "Välj över vilken tidsperiod ett genomsnitt ska beräknas")
-        #labelTop.tk(row=0)
+        labelTop = tk.Label(self, height=0, width=60, pady=20, anchor="s", text = "Välj över vilken tidsperiod ett genomsnitt ska beräknas")
+        #labelTop.grid(pady=10)
         comboExample = ttk.Combobox(self, state="readonly",
                             values=[
                                     "Dygn",
