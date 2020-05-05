@@ -64,8 +64,10 @@ class startPage(tk.Frame):
 
         def explorer():
             self.controller.shared_data["dataPath"] = filedialog.askopenfilename(initialdir = "C:/Users/User/Documents/Kandidat/Data",title = "Select file")
+            T.configure(state="normal")
             T.delete(1.0,"end")
             T.insert(1.0, self.controller.shared_data["dataPath"])
+            T.configure(state="disabled")
             bAnalysis.pack()
 
         bChoose = tk.Button(self, text ="Välj fil", command = explorer)
@@ -73,6 +75,7 @@ class startPage(tk.Frame):
 
         T = tk.Text(self, height=2, width=60)
         T.insert(1.0,"Vald fil..")
+        T.configure(state="disabled") # Gör att användaren inte kan skriva
         T.pack()
 
         bAnalysis = tk.Button(self, text="Analysera", command=lambda: controller.show_frame("analysisPage"))
@@ -80,6 +83,21 @@ class startPage(tk.Frame):
         # Om vi behöver en till page:
         #button2 = tk.Button(self, text="Go to Page Two", command=lambda: controller.show_frame("PageTwo"))
         #button2.pack()
+        labelTop = tk.Label(self, height=4, width=60, text = "Välj över vilken tidsperiod ett genomsnitt ska beräknas")
+        #labelTop.tk(row=0)
+        comboExample = ttk.Combobox(self, state="readonly",
+                            values=[
+                                    "Dygn",
+                                    "Natt",
+                                    "Dag",
+                                    "Varje timme (dagtid)",
+                                    "Varje timme (nattid)",
+                                    "Varje timme (dygn)"])
+        #print(dict(comboExample))
+        #comboExample.grid(column=0, row=1)
+        comboExample.current(0)
+        labelTop.pack()
+        comboExample.pack()
 
 class analysisPage(tk.Frame):
 
