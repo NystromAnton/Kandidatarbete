@@ -170,7 +170,8 @@ class analysisPage(tk.Frame):
 
         try:
             #self.toolbar.get_tk_widget().pack_forget()
-            self.toolbar.get_tk_widget().destroy()
+            #self.toolbar.get_tk_widget().destroy()
+            self.toolbar.destroy()
         except AttributeError:
             pass
         self.toolbar = NavigationToolbar2Tk(self.canvas, self) # Navigationbar för att kunna zooma och spara plotten mm
