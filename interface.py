@@ -45,7 +45,7 @@ class App(tk.Tk):
             page_name = F.__name__
             frame = F(parent=stack, controller=self)
             self.frames[page_name] = frame
-            frame.grid(row=0, column=0, sticky="nsew") # Alla frames ligger på samma ställa i en grid. Så bara den högst upp syns.
+            frame.grid(row=0, column=0, sticky="nsew") # Alla frames ligger på samma ställe i en grid. Så bara den högst upp syns.
 
         self.show_frame("startPage")
 
@@ -100,17 +100,30 @@ class startPage(tk.Frame):
         comboExample.pack()
 
 class analysisPage(tk.Frame):
-
-    def __init__(self, parent, controller):
+    def creator(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
         label = tk.Label(self, text="Analys", font=controller.title_font)
         label.pack(side="top", fill="x", pady=10)
 
-        bBack = tk.Button(self, text="Tillbaka till startsidan", command=lambda: controller.show_frame("startPage"))
-        bBack.pack()
+        bBack = tk.Button(self, text="Tillbaka till startsidan", command=lambda: controller.show_frame("startPage")).place(x=100, y=12)
+        #bBack.pack()
 
         self.bind("<<ShowFrame>>", self.on_show_frame) # Används för att on_show_frame funktionen ska köras när den här framen blir synlig
+
+
+    def __init__(self, parent, controller):
+        #self.creator(parent, controller)
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+        label = tk.Label(self, text="Analys", font=controller.title_font)
+        label.pack(side="top", fill="x", pady=10)
+
+        bBack = tk.Button(self, text="Tillbaka till startsidan", command=lambda: controller.show_frame("startPage")).place(x=100, y=12)
+        #bBack.pack()
+
+        self.bind("<<ShowFrame>>", self.on_show_frame) # Används för att on_show_frame funktionen ska köras när den här framen blir synlig
+
 
     def calcShow(self):
         df = dh.dateMean(self.controller.shared_data["dataPath"])
@@ -119,6 +132,15 @@ class analysisPage(tk.Frame):
         s.shewhart(df)
         c.cusum(df)
         e.o_ewma(df)
+
+        #scrollbar = tk.Scrollbar(self)
+        #scrollbar.pack(side="right", fill="y")
+
+        """for child in analysisPage.winfo_children(self):
+            child.destroy()
+        #self.creator(parent, controller)
+        self.__init__(parent, controller)
+        """
 
         fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
 
@@ -140,11 +162,22 @@ class analysisPage(tk.Frame):
         ax2.set_title('CUSUM')
         ax3.set_title('EWMA')
 
-        canvas = FigureCanvasTkAgg(fig, master=self)  # A tk.DrawingArea.
+        try:
+            self.canvas.get_tk_widget().pack_forget()
+        except AttributeError:
+            pass
+        self.canvas = FigureCanvasTkAgg(fig, master=self)  # A tk.DrawingArea.
 
-        toolbar = NavigationToolbar2Tk(canvas, self) # Navigationbar för att kunna zooma och spara plotten mm
-        toolbar.update()
-        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+        try:
+            #self.toolbar.get_tk_widget().pack_forget()
+            self.toolbar.get_tk_widget().destroy()
+        except AttributeError:
+            pass
+        self.toolbar = NavigationToolbar2Tk(self.canvas, self) # Navigationbar för att kunna zooma och spara plotten mm
+        self.toolbar.update()
+
+        self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+
 
     def on_show_frame(self, event):
         self.calcShow()
