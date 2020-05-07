@@ -14,7 +14,7 @@ def get_cusum2(data):
     B = 0.01
     d = 2 * math.log((1-B)/a)
     h = d*k
-    vmask = [0]
+    vmask = [None]
     for i in range(1, len(normalized)):                                               # Loopa igenom kolumnen.
         high = max(0, s_high[i-1] + normalized[i] - normalized.mean() - k)
         low = max(0, s_low[i-1] + normalized.mean() - k - normalized[i])
@@ -23,13 +23,13 @@ def get_cusum2(data):
         if high > h or low > h:
             vmask.append(max(high, low))
         else:
-            vmask.append(0)
+            vmask.append(None)
 
     data['cusum'] = pd.DataFrame(s_high).set_index(data.index)
     data['v-mask'] = pd.DataFrame(vmask).set_index(data.index)
 
 def get_dates(data):
-    datapoints_out_of_control = data[data['v-mask'] != 0].index #Tar ut alla index /dagar den är out of control.
+    datapoints_out_of_control = data[data['v-mask'].notna()].index #Tar ut alla index /dagar den är out of control.
     return datapoints_out_of_control
 
 # Funktion som tar kolumnen 'Flow (l/s)' i en DataFrame och räknar ut en CUSUM för den kolumnen.
