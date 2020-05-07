@@ -29,7 +29,8 @@ class App(tk.Tk):
         self.title('Vattenläckor interface')
 
         self.shared_data = { # Delad data som alla frames kan komma åt
-            "dataPath": tk.StringVar()
+            "dataPath": tk.StringVar(),
+            "comboExample": ttk.Combobox()
         }
 
         # På stacken ligger frames, den frame som är högst upp är den som syns.
@@ -85,7 +86,7 @@ class startPage(tk.Frame):
         #button2.pack()
         labelTop = tk.Label(self, height=0, width=60, pady=20, anchor="s", text = "Välj över vilken tidsperiod ett genomsnitt ska beräknas")
         #labelTop.grid(pady=10)
-        comboExample = ttk.Combobox(self, state="readonly",
+        self.controller.shared_data['comboExample'] = ttk.Combobox(self, state="readonly",
                             values=[
                                     "Dygn",
                                     "Natt",
@@ -95,23 +96,12 @@ class startPage(tk.Frame):
                                     "Varje timme (dygn)"])
         #print(dict(comboExample))
         #comboExample.grid(column=0, row=1)
-        comboExample.current(0)
+        self.controller.shared_data['comboExample'].current(0)
         labelTop.pack()
-        comboExample.pack()
+        self.controller.shared_data['comboExample'].pack()
+
 
 class analysisPage(tk.Frame):
-    def creator(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        self.controller = controller
-        label = tk.Label(self, text="Analys", font=controller.title_font)
-        label.pack(side="top", fill="x", pady=10)
-
-        bBack = tk.Button(self, text="Tillbaka till startsidan", command=lambda: controller.show_frame("startPage")).place(x=100, y=12)
-        #bBack.pack()
-
-        self.bind("<<ShowFrame>>", self.on_show_frame) # Används för att on_show_frame funktionen ska köras när den här framen blir synlig
-
-
     def __init__(self, parent, controller):
         #self.creator(parent, controller)
         tk.Frame.__init__(self, parent)
@@ -120,14 +110,15 @@ class analysisPage(tk.Frame):
         label.pack(side="top", fill="x", pady=10)
 
         bBack = tk.Button(self, text="Tillbaka till startsidan", command=lambda: controller.show_frame("startPage")).place(x=100, y=12)
-        #bBack.pack()
 
         self.bind("<<ShowFrame>>", self.on_show_frame) # Används för att on_show_frame funktionen ska köras när den här framen blir synlig
 
 
     def calcShow(self):
-        df = dh.dateMean(self.controller.shared_data["dataPath"])
-        #print(df)
+        i = self.controller.shared_data['comboExample'].current()
+        datahandlers = [dh.dateMean, dh.nightMean, dh.dayMean, dh.dayHours, dh.nightHours, dh.dateHours]
+        #df = dh.dateMean(self.controller.shared_data["dataPath"])
+        df = datahandlers[i](self.controller.shared_data["dataPath"])
 
         s.shewhart(df)
         c.cusum(df)
@@ -162,23 +153,20 @@ class analysisPage(tk.Frame):
         ax2.set_title('CUSUM')
         ax3.set_title('EWMA')
 
-        try:
+        try: # Kollar om det redan finns en plot, i så fall förstörs den innan en ny skapas
             self.canvas.get_tk_widget().pack_forget()
         except AttributeError:
             pass
-        self.canvas = FigureCanvasTkAgg(fig, master=self)  # A tk.DrawingArea.
 
         try:
-            #self.toolbar.get_tk_widget().pack_forget()
-            #self.toolbar.get_tk_widget().destroy()
             self.toolbar.destroy()
         except AttributeError:
             pass
+
+        self.canvas = FigureCanvasTkAgg(fig, master=self)  # A tk.DrawingArea.
         self.toolbar = NavigationToolbar2Tk(self.canvas, self) # Navigationbar för att kunna zooma och spara plotten mm
         self.toolbar.update()
-
         self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-
 
     def on_show_frame(self, event):
         self.calcShow()
