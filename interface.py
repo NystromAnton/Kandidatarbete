@@ -9,6 +9,7 @@ import tkinter as tk
 from tkinter import font as tkfont
 from tkinter import filedialog
 from tkinter import ttk
+import datetime
 
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
@@ -103,7 +104,6 @@ class startPage(tk.Frame):
 
 class analysisPage(tk.Frame):
     def __init__(self, parent, controller):
-        #self.creator(parent, controller)
         tk.Frame.__init__(self, parent)
         self.controller = controller
         label = tk.Label(self, text="Analys", font=controller.title_font)
@@ -115,23 +115,16 @@ class analysisPage(tk.Frame):
 
 
     def calcShow(self):
-        i = self.controller.shared_data['comboExample'].current()
+        i = self.controller.shared_data['comboExample'].current() # Kollar vilken datahandler som är vald i dropdownen
         datahandlers = [dh.dateMean, dh.nightMean, dh.dayMean, dh.dayHours, dh.nightHours, dh.dateHours]
-        #df = dh.dateMean(self.controller.shared_data["dataPath"])
-        df = datahandlers[i](self.controller.shared_data["dataPath"])
+        df = datahandlers[i](self.controller.shared_data["dataPath"]) # Kör valt alternativ
 
-        s.shewhart(df)
-        c.cusum(df)
-        e.o_ewma(df)
+        shewhartoc = s.shewhart(df)
+        cusumoc = c.cusum(df)
+        ewmaoc = e.o_ewma(df)
 
         #scrollbar = tk.Scrollbar(self)
         #scrollbar.pack(side="right", fill="y")
-
-        """for child in analysisPage.winfo_children(self):
-            child.destroy()
-        #self.creator(parent, controller)
-        self.__init__(parent, controller)
-        """
 
         fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
 
@@ -140,8 +133,8 @@ class analysisPage(tk.Frame):
         df.plot(y='UCL', color='red', ax=ax1)         #Plottar UCL
         df.plot(y='LCL', color='red', ax=ax1)         #Plottar LCL
 
-        df.plot(y='cusum', color='green', ax=ax2)                                    # Lägg till CUSUMen i plotten.
-        df.plot(y='v-mask', color='red', ax=ax2, linewidth=2)                        # Gör de delar som är ur kontroll röda
+        df.plot(y='cusum', color='green', ax=ax2)              # Lägg till CUSUMen i plotten.
+        df.plot(y='v-mask', color='red', ax=ax2, linewidth=2)  # Gör de delar som är ur kontroll röda
 
         df.plot(y='EWMA', color='green', ax=ax3)         # Plotta EWMA
         df.plot(y='UCL_EWMA', color='red', ax=ax3)
@@ -167,6 +160,30 @@ class analysisPage(tk.Frame):
         self.toolbar = NavigationToolbar2Tk(self.canvas, self) # Navigationbar för att kunna zooma och spara plotten mm
         self.toolbar.update()
         self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+
+        outOfControlDates = []
+
+        for shewDate in shewhartoc.values:
+            outOfControlDates.append(shewDate)
+
+        for cuDate in cusumoc.values:
+            outOfControlDates.append(cuDate)
+
+        for ewDate in ewmaoc.values:
+            outOfControlDates.append(ewDate)
+
+        datesWithCount = []
+        for entry in outOfControlDates:
+            times = outOfControlDates.count(entry)
+            datesWithCount.append((entry, times))
+
+        datesWithCount = list(dict.fromkeys(datesWithCount)) # Removes duplicates
+        for dates in datesWithCount:
+            print(dates[0])
+            print(dates[1])
+
+        ocdText = tk.Label(self, text=outOfControlDates)
+        ocdText.pack()
 
     def on_show_frame(self, event):
         self.calcShow()
