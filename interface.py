@@ -123,9 +123,6 @@ class analysisPage(tk.Frame):
         cusumoc = c.cusum(df)
         ewmaoc = e.o_ewma(df)
 
-        scrollbar = tk.Scrollbar(App)
-        scrollbar.pack(side="right", fill="y")
-
         fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
 
         df.plot(y='Flow (l/s)', color='blue', ax=ax1)
@@ -200,7 +197,10 @@ class analysisPage(tk.Frame):
         #self.ocdText = tk.Label(self, text=datesWithCount[0])
         #elf.ocdText.pack()
 
-        scrollbar.config( command = self.canvas2.yview)
+        scrollbar = tk.Scrollbar(self)
+        scrollbar.pack(side="right", fill="y")
+        scrollbar.config(command=self.canvas2.yview)
+        self.canvas2.configure(yscrollcommand=scrollbar.set)
 
     def on_show_frame(self, event):
         self.calcShow()
