@@ -192,15 +192,17 @@ class analysisPage(tk.Frame):
         #self.canvas2.create_rectangle(30, 10, 120, 80,
             #outline="#fb0", fill="#fb0")
         self.canvas2.create_text(0, 0, width=600, text=datesWithCount)
-        self.canvas2.pack(side='bottom', fill="both", expand=True)
+        #self.canvas2.pack(side='bottom', fill="both", expand=True)
 
         #self.ocdText = tk.Label(self, text=datesWithCount[0])
         #elf.ocdText.pack()
 
-        scrollbar = tk.Scrollbar(self)
+        scrollbar = tk.Scrollbar(self.canvas2)
         scrollbar.pack(side="right", fill="y")
         scrollbar.config(command=self.canvas2.yview)
         self.canvas2.configure(yscrollcommand=scrollbar.set)
+        self.canvas2.pack(side='bottom', fill="both", expand=True)
+
 
     def on_show_frame(self, event):
         self.calcShow()
