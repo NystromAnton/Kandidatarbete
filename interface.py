@@ -190,15 +190,15 @@ class analysisPage(tk.Frame):
             pass
 
 
-        #self.canvas2 = tk.Canvas(width=400, height=400, bg='white')
-        self.canvas2 = tk.Canvas(master=self, bg='white')
-        self.canvas2.create_rectangle(30, 10, 120, 80,
-            outline="#fb0", fill="#fb0")
-        self.canvas2.create_text(100, 10, text=datesWithCount)
+        self.canvas2 = tk.Canvas(width=400, height=400, bg='white')
+        #self.canvas2 = tk.Canvas(master=self, bg='white')
+        #self.canvas2.create_rectangle(30, 10, 120, 80,
+            #outline="#fb0", fill="#fb0")
+        self.canvas2.create_text(0, 0, width=600, text=datesWithCount)
         self.canvas2.pack(side='bottom', fill="both", expand=True)
 
-        self.ocdText = tk.Label(self, text=datesWithCount[0])
-        self.ocdText.pack()
+        #self.ocdText = tk.Label(self, text=datesWithCount[0])
+        #elf.ocdText.pack()
 
         scrollbar.config( command = self.canvas2.yview)
 
