@@ -123,8 +123,8 @@ class analysisPage(tk.Frame):
         cusumoc = c.cusum(df)
         ewmaoc = e.o_ewma(df)
 
-        #scrollbar = tk.Scrollbar(self)
-        #scrollbar.pack(side="right", fill="y")
+        scrollbar = tk.Scrollbar(App)
+        scrollbar.pack(side="right", fill="y")
 
         fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
 
@@ -159,7 +159,8 @@ class analysisPage(tk.Frame):
         self.canvas = FigureCanvasTkAgg(fig, master=self)  # A tk.DrawingArea.
         self.toolbar = NavigationToolbar2Tk(self.canvas, self) # Navigationbar för att kunna zooma och spara plotten mm
         self.toolbar.update()
-        self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+        #self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+        self.canvas.get_tk_widget().pack(side='top', fill='both', expand=True)
 
         outOfControlDates = []
 
@@ -178,12 +179,28 @@ class analysisPage(tk.Frame):
             datesWithCount.append((entry, times))
 
         datesWithCount = list(dict.fromkeys(datesWithCount)) # Removes duplicates
+        datesWithCount.sort()
         for dates in datesWithCount:
             print(dates[0])
             print(dates[1])
 
-        ocdText = tk.Label(self, text=outOfControlDates)
-        ocdText.pack()
+        try:
+            self.ocdText.destroy()
+        except AttributeError:
+            pass
+
+
+        #self.canvas2 = tk.Canvas(width=400, height=400, bg='white')
+        self.canvas2 = tk.Canvas(master=self, bg='white')
+        self.canvas2.create_rectangle(30, 10, 120, 80,
+            outline="#fb0", fill="#fb0")
+        self.canvas2.create_text(100, 10, text=datesWithCount)
+        self.canvas2.pack(side='bottom', fill="both", expand=True)
+
+        self.ocdText = tk.Label(self, text=datesWithCount[0])
+        self.ocdText.pack()
+
+        scrollbar.config( command = self.canvas2.yview)
 
     def on_show_frame(self, event):
         self.calcShow()
