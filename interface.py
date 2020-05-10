@@ -153,26 +153,36 @@ class analysisPage(tk.Frame):
         except AttributeError:
             pass
 
+        try: # Kollar om det redan finns en plot, i så fall förstörs den innan en ny skapas
+            self.canvas2.get_tk_widget().pack_forget()
+        except AttributeError:
+            pass
+
+        try: # Kollar om det redan finns en plot, i så fall förstörs den innan en ny skapas
+            self.outOfControlDates.destroy()
+        except AttributeError:
+            pass
+
         self.canvas = FigureCanvasTkAgg(fig, master=self)  # A tk.DrawingArea.
         self.toolbar = NavigationToolbar2Tk(self.canvas, self) # Navigationbar för att kunna zooma och spara plotten mm
         self.toolbar.update()
         #self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
         #self.canvas.get_tk_widget().pack(side='top', fill='both', expand=True)
 
-        outOfControlDates = []
+        self.outOfControlDates = []
 
         for shewDate in shewhartoc.values:
-            outOfControlDates.append(shewDate)
+            self.outOfControlDates.append(shewDate)
 
         for cuDate in cusumoc.values:
-            outOfControlDates.append(cuDate)
+            self.outOfControlDates.append(cuDate)
 
         for ewDate in ewmaoc.values:
-            outOfControlDates.append(ewDate)
+            self.outOfControlDates.append(ewDate)
 
         datesWithCount = []
-        for entry in outOfControlDates:
-            times = outOfControlDates.count(entry)
+        for entry in self.outOfControlDates:
+            times = self.outOfControlDates.count(entry)
             datesWithCount.append((entry, times))
 
         datesWithCount = list(dict.fromkeys(datesWithCount)) # Removes duplicates
@@ -189,6 +199,7 @@ class analysisPage(tk.Frame):
 
         self.canvas2 = tk.Canvas(width=400, height=800, bg='white')
         #self.canvas2 = tk.Canvas(master=self, bg='white')
+        # Ett sätt att göra fyrkant:
         #self.canvas2.create_rectangle(30, 10, 120, 80,
             #outline="#fb0", fill="#fb0")
         self.canvas2.create_text(500, 0, width=800, text=datesWithCount)
