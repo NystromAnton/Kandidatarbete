@@ -157,7 +157,7 @@ class analysisPage(tk.Frame):
         self.toolbar = NavigationToolbar2Tk(self.canvas, self) # Navigationbar för att kunna zooma och spara plotten mm
         self.toolbar.update()
         #self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-        self.canvas.get_tk_widget().pack(side='top', fill='both', expand=True)
+        #self.canvas.get_tk_widget().pack(side='top', fill='both', expand=True)
 
         outOfControlDates = []
 
@@ -187,11 +187,11 @@ class analysisPage(tk.Frame):
             pass
 
 
-        self.canvas2 = tk.Canvas(width=400, height=400, bg='white')
+        self.canvas2 = tk.Canvas(width=400, height=800, bg='white')
         #self.canvas2 = tk.Canvas(master=self, bg='white')
         #self.canvas2.create_rectangle(30, 10, 120, 80,
             #outline="#fb0", fill="#fb0")
-        self.canvas2.create_text(0, 0, width=600, text=datesWithCount)
+        self.canvas2.create_text(500, 0, width=800, text=datesWithCount)
         #self.canvas2.pack(side='bottom', fill="both", expand=True)
 
         #self.ocdText = tk.Label(self, text=datesWithCount[0])
@@ -202,6 +202,8 @@ class analysisPage(tk.Frame):
         scrollbar.config(command=self.canvas2.yview)
         self.canvas2.configure(yscrollcommand=scrollbar.set)
         self.canvas2.pack(side='bottom', fill="both", expand=True)
+
+        self.canvas.get_tk_widget().pack(fill='both', expand=True)
 
 
     def on_show_frame(self, event):
