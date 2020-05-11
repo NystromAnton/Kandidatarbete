@@ -31,7 +31,8 @@ class App(tk.Tk):
 
         self.shared_data = { # Delad data som alla frames kan komma åt
             "dataPath": tk.StringVar(),
-            "comboExample": ttk.Combobox()
+            "comboExample": ttk.Combobox(),
+            "canvas2": tk.Canvas()
         }
 
         # På stacken ligger frames, den frame som är högst upp är den som syns.
@@ -63,6 +64,8 @@ class startPage(tk.Frame):
         self.controller = controller
         label = tk.Label(self, text="Startsida", font=controller.title_font)
         label.pack(side="top", fill="x", pady=10)
+
+        self.bind("<<ShowFrame>>", self.on_show_frame) # Används för att on_show_frame funktionen ska köras när den här framen blir synlig
 
         def explorer():
             self.controller.shared_data["dataPath"] = filedialog.askopenfilename(initialdir = "C:/Users/User/Documents/Kandidat/Data",title = "Select file")
@@ -100,6 +103,14 @@ class startPage(tk.Frame):
         self.controller.shared_data['comboExample'].current(0)
         labelTop.pack()
         self.controller.shared_data['comboExample'].pack()
+
+    def on_show_frame(self, event):
+        try: # Kollar om det redan finns en plot, i så fall förstörs den innan en ny skapas
+            #self.controller.shared_data['canvas2'].get_tk_widget().pack_forget()
+            print("halloooo")
+            self.controller.shared_data['canvas2'].destroy()
+        except AttributeError:
+            pass
 
 
 class analysisPage(tk.Frame):
@@ -154,7 +165,8 @@ class analysisPage(tk.Frame):
             pass
 
         try: # Kollar om det redan finns en plot, i så fall förstörs den innan en ny skapas
-            self.canvas2.get_tk_widget().pack_forget()
+            #self.controller.shared_data['canvas2'].get_tk_widget().pack_forget()
+            self.controller.shared_data['canvas2'].destroy()
         except AttributeError:
             pass
 
@@ -197,22 +209,22 @@ class analysisPage(tk.Frame):
             pass
 
 
-        self.canvas2 = tk.Canvas(width=400, height=800, bg='white')
-        #self.canvas2 = tk.Canvas(master=self, bg='white')
+        self.controller.shared_data['canvas2'] = tk.Canvas(width=400, height=800, bg='white')
+        #self.controller.shared_data['canvas2'] = tk.Canvas(master=self, bg='white')
         # Ett sätt att göra fyrkant:
-        #self.canvas2.create_rectangle(30, 10, 120, 80,
+        #self.controller.shared_data['canvas2'].create_rectangle(30, 10, 120, 80,
             #outline="#fb0", fill="#fb0")
-        self.canvas2.create_text(500, 0, width=800, text=datesWithCount)
-        #self.canvas2.pack(side='bottom', fill="both", expand=True)
+        self.controller.shared_data['canvas2'].create_text(500, 0, width=800, text=datesWithCount)
+        #self.controller.shared_data['canvas2'].pack(side='bottom', fill="both", expand=True)
 
         #self.ocdText = tk.Label(self, text=datesWithCount[0])
         #elf.ocdText.pack()
 
-        scrollbar = tk.Scrollbar(self.canvas2)
+        scrollbar = tk.Scrollbar(self.controller.shared_data['canvas2'])
         scrollbar.pack(side="right", fill="y")
-        scrollbar.config(command=self.canvas2.yview)
-        self.canvas2.configure(yscrollcommand=scrollbar.set)
-        self.canvas2.pack(side='bottom', fill="both", expand=True)
+        scrollbar.config(command=self.controller.shared_data['canvas2'].yview)
+        self.controller.shared_data['canvas2'].configure(yscrollcommand=scrollbar.set)
+        self.controller.shared_data['canvas2'].pack(side='bottom', fill="both", expand=True)
 
         self.canvas.get_tk_widget().pack(fill='both', expand=True)
 
