@@ -32,7 +32,7 @@ class App(tk.Tk):
         self.shared_data = { # Delad data som alla frames kan komma åt
             "dataPath": tk.StringVar(),
             "comboExample": ttk.Combobox(),
-            "canvas2": tk.Canvas()
+            "canvas2": tk.Canvas() # Canvas2 ligger här eftersom den annars hänger med tillbaka till startpage
         }
 
         # På stacken ligger frames, den frame som är högst upp är den som syns.
@@ -89,7 +89,7 @@ class startPage(tk.Frame):
         #button2 = tk.Button(self, text="Go to Page Two", command=lambda: controller.show_frame("PageTwo"))
         #button2.pack()
         labelTop = tk.Label(self, height=0, width=60, pady=20, anchor="s", text = "Välj över vilken tidsperiod ett genomsnitt ska beräknas")
-        #labelTop.grid(pady=10)
+
         self.controller.shared_data['comboExample'] = ttk.Combobox(self, state="readonly",
                             values=[
                                     "Dygn",
@@ -98,16 +98,12 @@ class startPage(tk.Frame):
                                     "Varje timme (dagtid)",
                                     "Varje timme (nattid)",
                                     "Varje timme (dygn)"])
-        #print(dict(comboExample))
-        #comboExample.grid(column=0, row=1)
         self.controller.shared_data['comboExample'].current(0)
         labelTop.pack()
         self.controller.shared_data['comboExample'].pack()
 
     def on_show_frame(self, event):
-        try: # Kollar om det redan finns en plot, i så fall förstörs den innan en ny skapas
-            #self.controller.shared_data['canvas2'].get_tk_widget().pack_forget()
-            print("halloooo")
+        try: # Kollar om det redan finns datum utskrivna, i så fall förstörs den innan en ny skapas
             self.controller.shared_data['canvas2'].destroy()
         except AttributeError:
             pass
@@ -165,7 +161,6 @@ class analysisPage(tk.Frame):
             pass
 
         try: # Kollar om det redan finns en plot, i så fall förstörs den innan en ny skapas
-            #self.controller.shared_data['canvas2'].get_tk_widget().pack_forget()
             self.controller.shared_data['canvas2'].destroy()
         except AttributeError:
             pass
@@ -178,11 +173,8 @@ class analysisPage(tk.Frame):
         self.canvas = FigureCanvasTkAgg(fig, master=self)  # A tk.DrawingArea.
         self.toolbar = NavigationToolbar2Tk(self.canvas, self) # Navigationbar för att kunna zooma och spara plotten mm
         self.toolbar.update()
-        #self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-        #self.canvas.get_tk_widget().pack(side='top', fill='both', expand=True)
 
-        self.outOfControlDates = []
-
+        self.outOfControlDates = [] # En lista som de tre listorna från diagrammen slås ihop i
         for shewDate in shewhartoc.values:
             self.outOfControlDates.append(shewDate)
 
@@ -192,16 +184,16 @@ class analysisPage(tk.Frame):
         for ewDate in ewmaoc.values:
             self.outOfControlDates.append(ewDate)
 
-        datesWithCount = []
+        datesWithCount = [] # Ny lista där datumen läggs in som tuple tillsammans med hur många diagram som säger samma datum
         for entry in self.outOfControlDates:
             times = self.outOfControlDates.count(entry)
             datesWithCount.append((entry, times))
 
         datesWithCount = list(dict.fromkeys(datesWithCount)) # Removes duplicates
         datesWithCount.sort()
-        for dates in datesWithCount:
-            print(dates[0])
-            print(dates[1])
+        #for dates in datesWithCount:
+            #print(dates[0])
+            #print(dates[1])
 
         try:
             self.ocdText.destroy()
@@ -210,22 +202,17 @@ class analysisPage(tk.Frame):
 
 
         self.controller.shared_data['canvas2'] = tk.Canvas(width=400, height=800, bg='white')
-        #self.controller.shared_data['canvas2'] = tk.Canvas(master=self, bg='white')
         # Ett sätt att göra fyrkant:
         #self.controller.shared_data['canvas2'].create_rectangle(30, 10, 120, 80,
             #outline="#fb0", fill="#fb0")
         self.controller.shared_data['canvas2'].create_text(500, 0, width=800, text=datesWithCount)
-        #self.controller.shared_data['canvas2'].pack(side='bottom', fill="both", expand=True)
 
-        #self.ocdText = tk.Label(self, text=datesWithCount[0])
-        #elf.ocdText.pack()
-
-        scrollbar = tk.Scrollbar(self.controller.shared_data['canvas2'])
+        scrollbar = tk.Scrollbar(self.controller.shared_data['canvas2']) # En scrollbar eftersom datumen just nu är på så liten yta
         scrollbar.pack(side="right", fill="y")
         scrollbar.config(command=self.controller.shared_data['canvas2'].yview)
         self.controller.shared_data['canvas2'].configure(yscrollcommand=scrollbar.set)
-        self.controller.shared_data['canvas2'].pack(side='bottom', fill="both", expand=True)
 
+        self.controller.shared_data['canvas2'].pack(side='bottom', fill="both", expand=True)
         self.canvas.get_tk_widget().pack(fill='both', expand=True)
 
 
