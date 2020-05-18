@@ -79,7 +79,7 @@ def nightMean(path):
             break                                                                               # Räknar inte med den sista dagen
 
     end = process_time()
-    print("nightMean: " + str(end - start))
+    #print("nightMean: " + str(end - start))
 
 
     return dfResult
@@ -117,7 +117,7 @@ def dayMean(path):
             break                                                                               # Räknar inte med den sista dagen
 
     end = process_time()
-    print("dayMean: " + str(end - start))
+    #print("dayMean: " + str(end - start))
 
     return dfResult
 
@@ -164,7 +164,7 @@ def dayHours(path):
 
 
     end = process_time()
-    print("dayHours: " + str(end - start))
+    #print("dayHours: " + str(end - start))
 
     return dfResult
 
@@ -211,7 +211,7 @@ def nightHours(path):
 
 
     end = process_time()
-    print("nightHours: " + str(end - start))
+    #print("nightHours: " + str(end - start))
 
     return dfResult
 
@@ -250,6 +250,6 @@ def dateHours(path):
             dfResult = dfResult.append(dfData)                                # Appendar df på dfResult
 
     end = process_time()
-    print("dateHours: " + str(end - start))
+    #print("dateHours: " + str(end - start))
 
     return dfResult
