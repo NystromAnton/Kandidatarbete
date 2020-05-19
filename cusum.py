@@ -20,8 +20,8 @@ def get_cusum2(data):
         low = max(0, s_low[i-1] + normalized.mean() - k - normalized[i])
         s_high.append(high)
         s_low.append(low)
-        if high > h or low > h:
-            vmask.append(max(high, low))
+        if high > h:
+            vmask.append(high)
         else:
             vmask.append(None)
 
