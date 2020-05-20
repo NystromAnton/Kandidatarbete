@@ -231,7 +231,7 @@ class analysisPage(tk.Frame):
     def on_show_frame(self, event):
         if self.controller.shared_data["dataPath"].lower().endswith('.csv'):
             self.calcShow()
-
+        #lägg till att den varnar för fel fil format
 
 # Om vi behöver en till page:
 """class PageTwo(tk.Frame):
