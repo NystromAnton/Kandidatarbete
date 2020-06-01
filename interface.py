@@ -132,23 +132,35 @@ class analysisPage(tk.Frame):
 
         fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
 
-        df.plot(y='Flow (l/s)', color='blue', ax=ax1)
-        df.plot(y='avg', color='black', ax=ax1)       #Plottar en medelvärdeslinje
-        df.plot(y='UCL', color='red', ax=ax1)         #Plottar UCL
-        df.plot(y='LCL', color='red', ax=ax1)         #Plottar LCL
+        ax1.set_title('Shewhart', fontsize=30)
+        df.plot(y='Flow (l/s)', color='blue', label='Vattenflöde', ax=ax1, fontsize=11)
+        df.plot(y='avg', color='black', label='Medelflöde', ax=ax1, fontsize=11)       #Plottar en medelvärdeslinje
+        df.plot(y='UCL', color='red', ax=ax1, fontsize=11)         #Plottar UCL
+        df.plot(y='LCL', color='red', ax=ax1, fontsize=11)         #Plottar LCL
+        ax1.set_xlabel("Datum", fontsize=20)
+        ax1.set_ylabel("Liter per sekund", fontsize=18)
+        ax1.legend(loc=1, fontsize = 'x-large')
 
-        df.plot(y='cusum', color='green', ax=ax2)              # Lägg till CUSUMen i plotten.
-        df.plot(y='v-mask', color='red', ax=ax2, linewidth=2)  # Gör de delar som är ur kontroll röda
+        ax2.set_title('CUSUM', fontsize=30)
+        df.plot(y='cusum', color='green', label='CUSUM', ax=ax2, fontsize=11)              # Lägg till CUSUMen i plotten.
+        df.plot(y='v-mask', color='red', label='Ur kontroll', ax=ax2, linewidth=2, fontsize=11)  # Gör de delar som är ur kontroll röda
+        ax2.set_xlabel("Datum", fontsize=20)
+        ax2.set_ylabel(r'$\sigma$', fontsize=25)
+        ax2.legend(loc=1, fontsize = 'x-large')
 
-        df.plot(y='EWMA', color='green', ax=ax3)         # Plotta EWMA
-        df.plot(y='UCL_EWMA', color='red', ax=ax3)
-        df.plot(y='LCL_EWMA', color='red', ax=ax3)
+        ax3.set_title('EWMA', fontsize=30)
+        df.plot(y='EWMA', color='green', ax=ax3, fontsize=11)         # Plotta EWMA
+        df.plot(y='UCL_EWMA', color='red', label='UCL', ax=ax3, fontsize=11)
+        df.plot(y='LCL_EWMA', color='red', label='LCL', ax=ax3, fontsize=11)
+        ax3.set_xlabel("Datum", fontsize=20)
+        ax3.set_ylabel("Liter per sekund", fontsize=18)
+        ax3.legend(loc=1, fontsize = 'x-large')
 
         fig.autofmt_xdate()
 
-        ax1.set_title('Shewhart')
-        ax2.set_title('CUSUM')
-        ax3.set_title('EWMA')
+
+
+
 
         try: # Kollar om det redan finns en plot, i så fall förstörs den innan en ny skapas
             self.canvas.get_tk_widget().pack_forget()
@@ -217,8 +229,9 @@ class analysisPage(tk.Frame):
 
 
     def on_show_frame(self, event):
-        self.calcShow()
-
+        if self.controller.shared_data["dataPath"].lower().endswith('.csv'):
+            self.calcShow()
+        #lägg till att den varnar för fel fil format
 
 # Om vi behöver en till page:
 """class PageTwo(tk.Frame):
